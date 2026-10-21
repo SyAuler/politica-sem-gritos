@@ -42,6 +42,7 @@ import { SourceLinks } from './source-links';
 import { Divida } from './divida';
 import { Glossario } from './glossario';
 import { HISTORICO_AT } from './fontes';
+import { SPEND_READING, SPEND_RECORDS } from './gastos';
 import {
   CASE_DEFENSES,
   CASE_GROUPS,
@@ -250,6 +251,30 @@ export class Inicio {
       };
     }),
   );
+  // ---------- gastos de dinheiro público ----------
+  protected readonly spendReading = SPEND_READING;
+  /** Custos de cada candidato, na ordem das colunas. */
+  protected readonly spendRecords = computed(() =>
+    this.candidates().map((c) => {
+      const r = SPEND_RECORDS.find((x) => x.id === c.id)!;
+      return { ...r, candidate: c };
+    }),
+  );
+  /** "R$ 23,7 mi", "R$ 180 mil": valores curtos para gráficos. */
+  protected readonly money = (v: number) =>
+    v >= 1_000_000
+      ? `R$ ${(v / 1_000_000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`
+      : `R$ ${Math.round(v / 1000).toLocaleString('pt-BR')} mil`;
+  protected readonly pctOf = (part: number, total: number) => (total ? (part / total) * 100 : 0);
+  /** Card de custo aberto em cada coluna (um por vez); o detalhe abre abaixo dos cards. */
+  protected readonly spendOpen = signal<Record<string, number | null>>({});
+  protected toggleSpend(id: string, i: number) {
+    this.spendOpen.update((o) => ({ ...o, [id]: o[id] === i ? null : i }));
+  }
+  /** Escala das barras por ano: o maior valor, do candidato ou da referência. */
+  protected readonly yearMax = (rows: { main: number; reference?: number }[]) =>
+    Math.max(...rows.flatMap((r) => [r.main, r.reference ?? 0]));
+
   protected readonly outcomeLabel = (key: string) =>
     CASE_OUTCOMES.find((o) => o.key === key)?.label ?? key;
   protected readonly lawRoleText = (label: string) =>

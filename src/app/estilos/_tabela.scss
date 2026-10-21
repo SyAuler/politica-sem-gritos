@@ -1,0 +1,31 @@
+// "Ver os números em tabela": a tabela que acompanha cada gráfico, recolhida.
+
+.table-view {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+
+  summary {
+    cursor: pointer;
+    color: var(--azul);
+    font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 0.6rem;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th,
+  td {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--linha);
+    text-align: right;
+  }
+
+  th[scope='row'],
+  thead th:first-child {
+    text-align: left;
+  }
+}

@@ -9,6 +9,7 @@ import {
   TOPIC_GROUPS,
   TOPICS,
 } from './data';
+import { SPEND_RECORDS } from './gastos';
 import { CASE_DEFENSES, CASE_OUTCOMES, CASE_RECORDS, CASE_RUMORS } from './processos';
 
 /**
@@ -87,6 +88,12 @@ describe('Conteúdo do site', () => {
       ...CASE_RECORDS.flatMap((r) => r.cases.flatMap((k) => k.timeline.flatMap((e) => e.sources))),
       ...Object.values(CASE_RUMORS).flatMap((list) => list.flatMap((r) => r.sources)),
       ...Object.values(CASE_DEFENSES).flatMap((d) => d.sources),
+      ...SPEND_RECORDS.flatMap((r) => [
+        ...r.monthly.flatMap((i) => i.sources),
+        ...r.headlines.flatMap((h) => [...h.sources, ...(h.notes ?? []).flatMap((n) => n.sources)]),
+        ...r.corrections.flatMap((c) => c.sources),
+        ...(r.directed ?? []).flatMap((i) => i.sources),
+      ]),
     ];
     for (const s of all) {
       expect(s.url)
@@ -144,6 +151,22 @@ describe('Conteúdo do site', () => {
     expect(a).toBe(b);
     for (const id of ids) {
       expect(CASE_DEFENSES[id].sources.length).withContext(id).toBeGreaterThan(0);
+    }
+  });
+  it('mostra os custos dos dois com o mesmo número de manchetes e fonte em tudo', () => {
+    expect(SPEND_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const [a, b] = SPEND_RECORDS.map((r) => r.headlines.length);
+    expect(a).toBe(b);
+    for (const r of SPEND_RECORDS) {
+      expect(r.headlines.some((h) => h.kind === 'campanha'))
+        .withContext(r.id)
+        .toBeTrue();
+      for (const h of r.headlines) {
+        expect(h.sources.length).withContext(`${r.id}: ${h.label}`).toBeGreaterThan(0);
+      }
+      for (const it of [...r.monthly, ...r.corrections, ...(r.directed ?? [])]) {
+        expect(it.sources.length).withContext(r.id).toBeGreaterThan(0);
+      }
     }
   });
 });

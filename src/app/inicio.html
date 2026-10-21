@@ -188,7 +188,7 @@
 
   <section id="hoje">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 1 de 6</span> Ponto de partida</p>
+      <p class="section-kicker"><span>Parte 1 de 7</span> Ponto de partida</p>
       <h2 class="section-title">Como estamos hoje</h2>
       <p class="section-lead">Quatro números oficiais para situar a conversa.</p>
     </header>
@@ -214,7 +214,7 @@
 
   <section id="comparar">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 2 de 6</span> As propostas</p>
+      <p class="section-kicker"><span>Parte 2 de 7</span> As propostas</p>
       <h2 class="section-title">Compare por assunto</h2>
       <p class="section-lead">Escolha um tema. As duas colunas respondem às mesmas perguntas.</p>
     </header>
@@ -378,7 +378,7 @@
 
   <section id="congresso">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 3 de 6</span> O Congresso</p>
+      <p class="section-kicker"><span>Parte 3 de 7</span> O Congresso</p>
       <h2 class="section-title">Quem decide de verdade</h2>
       <p class="section-lead">
         Presidente propõe; Congresso aprova, muda ou barra. A Câmara e o Senado já foram eleitos: o
@@ -509,7 +509,7 @@
 
   <section id="leis">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 4 de 6</span> O histórico</p>
+      <p class="section-kicker"><span>Parte 4 de 7</span> O histórico</p>
       <h2 class="section-title">O que cada um já conseguiu aprovar</h2>
       <p class="section-lead">
         Projetos, emendas e medidas que viraram lei, cargo por cargo. Um já foi presidente e o outro
@@ -600,7 +600,7 @@
 
   <section id="processos">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 5 de 6</span> O histórico</p>
+      <p class="section-kicker"><span>Parte 5 de 7</span> O histórico</p>
       <h2 class="section-title">Processos e investigações</h2>
       <p class="section-lead">
         Cada caso com o que foi alegado, o papel do candidato, as decisões da Justiça com data e
@@ -711,9 +711,187 @@
     </app-paper>
   </section>
 
+  <section id="gastos">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 6 de 7</span> O histórico</p>
+      <h2 class="section-title">Quanto custam aos cofres públicos</h2>
+      <p class="section-lead">
+        Os custos do mandato atual de cada um, com os valores que são divulgados. Não é uma
+        comparação entre os dois: presidente e senador têm estruturas de níveis diferentes. Quando
+        existe, a referência é a média do próprio cargo.
+      </p>
+    </header>
+
+    <div class="columns">
+      @for (r of spendRecords(); track r.id) {
+        <div class="spend-col">
+          <header class="law-head">
+            <img [src]="r.candidate.photo.src" alt="" width="56" height="56" />
+            <div>
+              <h3>{{ r.candidate.name }}</h3>
+              <p>{{ r.mandate }}</p>
+            </div>
+          </header>
+
+          <div class="hl-grid">
+            @for (h of r.headlines; track h.label; let i = $index) {
+              <app-paper
+                class="paper hl-card"
+                [class.hl-wide]="h.kind === 'campanha'"
+                [variant]="h.kind === 'campanha' ? 'jornal' : 'postit'"
+                [rotulo]="h.kind === 'campanha' ? 'Campanha 2026' : ''"
+                [cor]="postitColors[i % postitColors.length]"
+              >
+                <p class="hl-label">{{ h.label }}</p>
+                <p class="hl-value">{{ h.value }}</p>
+                <p class="hl-context">{{ h.context }}</p>
+                <button
+                  type="button"
+                  class="hl-toggle"
+                  [attr.aria-expanded]="spendOpen()[r.id] === i"
+                  [attr.aria-controls]="'hl-panel-' + r.id"
+                  (click)="toggleSpend(r.id, i)"
+                >
+                  {{ spendOpen()[r.id] === i ? 'Fechar detalhes' : 'Ver detalhes' }}
+                  <span aria-hidden="true">{{ spendOpen()[r.id] === i ? '▴' : '▾' }}</span>
+                </button>
+              </app-paper>
+            }
+          </div>
+
+          @if (spendOpen()[r.id] !== undefined && spendOpen()[r.id] !== null) {
+            @let h = r.headlines[spendOpen()[r.id]!];
+            <app-paper
+              class="paper hl-panel"
+              variant="liso"
+              [faixa]="true"
+              [attr.id]="'hl-panel-' + r.id"
+            >
+              <span class="tag fato">Fato</span>
+              <h4 class="case-group-title">{{ h.label }}: {{ h.value }}</h4>
+              <p>{{ h.detail }}</p>
+              @if (h.yearly; as y) {
+                <div class="hl-years">
+                  <p class="hl-years-legend">
+                    <span><i class="key-main"></i>{{ y.mainLabel }}</span>
+                    @if (y.referenceLabel) {
+                      <span><i class="key-ref"></i>{{ y.referenceLabel }}</span>
+                    }
+                    @if (y.unit) {
+                      <small>{{ y.unit }}</small>
+                    }
+                  </p>
+                  @for (row of y.rows; track row.year) {
+                    <div class="hl-year">
+                      <span class="hl-year-label">{{ row.year }}</span>
+                      <span class="hl-track">
+                        <span
+                          class="hl-bar"
+                          [style.width.%]="pctOf(row.main, yearMax(y.rows))"
+                        ></span>
+                        @if (row.reference) {
+                          <span
+                            class="hl-ref"
+                            [style.left.%]="pctOf(row.reference, yearMax(y.rows))"
+                            [attr.title]="y.referenceLabel + ': ' + money(row.reference)"
+                          ></span>
+                        }
+                      </span>
+                      <span class="hl-year-value"
+                        >{{ money(row.main) }}
+                        @if (row.reference) {
+                          <small>referência {{ money(row.reference) }}</small>
+                        }
+                        @if (row.rank) {
+                          <small>{{ row.rank }}</small>
+                        }
+                      </span>
+                    </div>
+                  }
+                </div>
+              }
+              @if (h.notes) {
+                <ul class="hl-notes">
+                  @for (n of h.notes; track n.text) {
+                    <li>
+                      {{ n.text }}
+                      <app-source-links [sources]="n.sources" />
+                    </li>
+                  }
+                </ul>
+              }
+              <app-source-links [sources]="h.sources" />
+            </app-paper>
+          }
+
+          <app-paper class="paper spend-items" variant="liso">
+            <span class="tag fato">Fato</span>
+            <h4 class="case-group-title">Por mês</h4>
+            <dl>
+              @for (it of r.monthly; track it.label) {
+                <div>
+                  <dt>{{ it.label }}</dt>
+                  <dd>
+                    <strong>{{ it.value }}</strong>
+                    <span>{{ it.detail }}</span>
+                    <app-source-links [sources]="it.sources" />
+                  </dd>
+                </div>
+              }
+            </dl>
+          </app-paper>
+
+          @if (r.directed) {
+            <app-paper class="paper spend-items" variant="liso">
+              <h4 class="case-group-title">Dinheiro que ele direcionou</h4>
+              <p class="note">
+                Não é custo dele: é a parte do Orçamento que cada parlamentar indica.
+              </p>
+              <dl>
+                @for (it of r.directed; track it.label) {
+                  <div>
+                    <dt>{{ it.label }}</dt>
+                    <dd>
+                      <strong>{{ it.value }}</strong>
+                      <span>{{ it.detail }}</span>
+                      <app-source-links [sources]="it.sources" />
+                    </dd>
+                  </div>
+                }
+              </dl>
+            </app-paper>
+          }
+
+          <app-paper class="paper case-rumors" variant="liso">
+            <h4 class="case-group-title">Informações erradas sobre os gastos</h4>
+            <ul>
+              @for (c of r.corrections; track c.text) {
+                <li>
+                  <p>{{ c.text }}</p>
+                  <app-source-links [sources]="c.sources" />
+                </li>
+              }
+            </ul>
+          </app-paper>
+
+          <p class="spend-unknown"><strong>O que não é divulgado.</strong> {{ r.unknown }}</p>
+        </div>
+      }
+    </div>
+
+    <app-paper class="paper reading" variant="jornal" rotulo="Análise" [tilt]="0.4">
+      <h3>Como ler esta parte</h3>
+      <ul class="law-reading">
+        @for (r of spendReading; track r) {
+          <li>{{ r }}</li>
+        }
+      </ul>
+    </app-paper>
+  </section>
+
   <section id="historico">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 6 de 6</span> A série histórica</p>
+      <p class="section-kicker"><span>Parte 7 de 7</span> A série histórica</p>
       <h2 class="section-title">O que os dados mostram</h2>
       <p class="section-lead">
         Séries oficiais do IBGE e do Banco Central, ano a ano. Os governos aparecem só como legenda

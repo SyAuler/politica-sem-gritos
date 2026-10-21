@@ -60,6 +60,33 @@ apague-o daqui e tire o aviso correspondente do site.
   propaganda negativa, AIJE contra a chapa dele) ficaram de fora por não tratarem de corrupção. Se
   entrarem, pesquisar também as representações contra a campanha do Lula, para manter a simetria.
 
+## Gastos de dinheiro público (`src/app/gastos.ts`)
+
+- **Portal da Transparência pede captcha:** ficaram sem dado o cartão corporativo da Presidência de
+  jun a set/2026, o orçamento executado da Presidência (órgão 20000) e o arquivo de viagens. Tentar
+  pelo navegador ou com uma chave da API (cadastro gratuito no Portal).
+- **Média do cartão corporativo da Presidência:** usa 2013, 2014 e 2019–2022. Faltam 2015–2018
+  (fim do governo Dilma e governo Temer): o Portal passou a pedir verificação humana no meio do
+  download. Baixar os meses que faltam em `download-de-dados/cpgf/AAAAMM` e recalcular (órgão
+  20101, corrigido pelo IPCA a valores de 2025). Os arquivos antes de 2013 não existem no Portal.
+- **Sigilo do cartão:** nos arquivos do Portal, a parte marcada como sigilosa passa de 97% desde
+  2013, mas o TCU cita de 64% a 79% nos governos Dilma e Temer. Entender o critério do TCU.
+- **Viagens:** falta a divisão por ano dos R$ 150,5 milhões da Presidência (2023–2025) e o gasto
+  do Itamaraty com viagens internacionais em 2024.
+- **Diferença no cartão corporativo:** a soma do site para 2023–2025 (R$ 74,1 milhões no órgão
+  superior) não bate com os R$ 45,2 milhões do Aos Fatos; o total do TCU bate com o do site.
+  Entender o recorte antes de citar comparações de terceiros.
+- **Aposentadoria do Lula:** o valor atual e se é paga junto com o salário não foram localizados.
+- **Emendas do Flávio:** falta a série oficial por ano e por destino (Siga Brasil ou Portal). O
+  número de R$ 271 milhões atribuído à Folha (mai/2026) não foi confirmado; o site usa os R$ 364
+  milhões corrigidos da Folhapress (ago/2026).
+- **Próxima etapa — mandatos anteriores:** levantar os custos dos mandatos anteriores de cada um,
+  desde 2003 (início dos gráficos do site): Lula na Presidência em 2003–2010 (cartão corporativo,
+  viagens) e Flávio na Alerj em 2003–2019 e no Senado desde 2019. Manter a regra: cada candidato na
+  sua escala, sem comparação entre cargos.
+- **Campanha:** os valores são parciais (relatórios financeiros de 17 e 20/10/2026). Atualizar com
+  a prestação de contas final, que vai até 14/11/2026.
+
 ## Fontes que bloqueiam acesso automático
 
 - **Planalto (planalto.gov.br):** recusa conexões automáticas. Os links de leis apontam para a
@@ -71,5 +98,4 @@ apague-o daqui e tire o aviso correspondente do site.
 
 - **Menu do topo:** a seção "O que cada um já conseguiu aprovar" ainda não tem item no menu. No
   celular só cabem cinco; a ideia é criar um item "Histórico" quando entrarem os próximos blocos.
-- **Bloco 3 — gastos de dinheiro público de cada candidato.**
 - **Bloco 4 — para onde vão os impostos e quanto custam Congresso, STF e os outros órgãos.**
