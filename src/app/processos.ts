@@ -1039,7 +1039,7 @@ export const CASE_RUMORS: Record<
     {
       text: '“Lula gastou R$ 7 bilhões em viagens.”',
       verdict:
-        'Falso. O valor é o gasto com viagens de todo o governo federal em 2023–2025; a Presidência gastou R$ 150,5 milhões.',
+        'Falso. O valor é o gasto com viagens de todo o governo federal em 2023–2025; a Presidência gastou cerca de R$ 150 milhões.',
       sources: [
         f(
           'Lula não gastou R$ 7 bilhões em viagens',

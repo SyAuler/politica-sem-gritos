@@ -162,6 +162,12 @@ export const S = {
     'https://www25.senado.leg.br/web/senadores/senador/-/perfil/5894',
     HISTORICO_AT,
   ),
+  alerjFlavio: src(
+    'Proposições de Flávio Bolsonaro na Alerj, legislaturas de 2003 a 2019 (contagem do site em scripts/alerj_flavio.py)',
+    'Assembleia Legislativa do Rio de Janeiro',
+    'https://alerjln1.alerj.rj.gov.br/scpro1519.nsf/flaviobolsonaroint?OpenForm&ExpandView',
+    HISTORICO_AT,
+  ),
   folhaFlavioLeis: src(
     'Flávio Bolsonaro mirou segurança, mas não teve projetos próprios transformados em lei (Folha de S.Paulo, 30/05/2026)',
     'Folhapress, republicado por Acessa.com',

@@ -530,29 +530,38 @@ export const LAW_RECORDS: LawRecord[] = [
         period: '2003–2019',
         kind: 'parlamentar',
         stats: [
-          { value: '208', label: 'propostas apresentadas na Assembleia do Rio' },
-          { value: '51', label: 'viraram lei estadual, cerca de 1 em cada 4' },
+          {
+            value: '193',
+            label:
+              'propostas como primeiro autor (136 projetos de lei, 8 PECs e 49 de outros tipos)',
+          },
+          {
+            value: '34',
+            label:
+              'projetos de lei dele viraram lei estadual; outras 39 resoluções, quase todas homenagens, também foram aprovadas',
+          },
+          { value: '60', label: 'propostas em que assina como coautor; 26 viraram norma' },
         ],
         examples: [
           {
-            title: 'Renovação da carteira de motorista',
+            title: 'Renovação da carteira de motorista (Lei 4.941/2006)',
             detail: 'Isenção de taxas estaduais para agentes de segurança renovarem a habilitação.',
             how: 'Autor',
           },
           {
-            title: 'Multa para trote',
+            title: 'Multa para trote (Lei 7.478/2016)',
             detail: 'Multa para quem passa trote aos serviços de emergência.',
             how: 'Autor',
           },
           {
-            title: 'Reprovação no exame psicológico',
+            title: 'Reprovação no exame psicológico (Lei 5.938/2011)',
             detail:
               'Candidato de concurso passa a ter direito de saber por que foi reprovado no psicotécnico.',
             how: 'Autor',
           },
         ],
-        note: 'Não avançaram, entre outras, uma PEC estadual sobre expulsão de militares do estado e o referendo sobre cotas raciais, proposto três vezes.',
-        sources: [S.folhaFlavioLeis],
+        note: 'Não avançaram, entre outras, duas PECs estaduais sobre a expulsão de militares do estado (40/2009 e 59/2009) e o referendo sobre cotas raciais (PDL 1/2007 e PR 73/2007). Os números acima são a contagem do site no sistema da Alerj; a Folha publicou outra (208 propostas, 51 leis), sem dizer o critério.',
+        sources: [S.alerjFlavio, S.folhaFlavioLeis],
       },
       {
         role: 'Senador pelo RJ',
@@ -694,7 +703,7 @@ export const LIMITATIONS = [
   'As propostas foram resumidas dos planos de governo registrados no TSE, com a página de cada item. Resumir sempre simplifica: na dúvida, leia o trecho no PDF oficial.',
   'Só entra o que está no plano registrado. Promessas feitas em debates, entrevistas e redes sociais não aparecem aqui.',
   'Os processos foram conferidos em reportagens e agências de notícias, com o link de cada decisão: os sistemas do STF, do STJ e do TJ-RJ não puderam ser consultados diretamente. Os casos de 2026 ainda estão em andamento e podem mudar.',
-  'O histórico de leis do Flávio no Senado foi contado pelo site nos dados abertos do Senado (out/2026). Os números da Alerj, da Constituinte e dos governos Lula vêm de levantamentos da imprensa, com o link de cada um.',
+  'O histórico de leis do Flávio foi contado pelo site nos dados abertos do Senado e no sistema de proposições da Alerj (out/2026). Os números da Constituinte e dos governos Lula vêm de levantamentos da imprensa, com o link de cada um.',
   'A trajetória dos candidatos vem de biografias públicas (Wikipédia) e ainda não foi conferida, item por item, em fonte oficial.',
   'Os 27 senadores que continuam no mandato vêm de levantamentos da imprensa; os eleitos em 2026 foram conferidos no TSE.',
 ];

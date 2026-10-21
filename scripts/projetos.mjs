@@ -4,7 +4,8 @@
 //   node scripts/projetos.mjs            (usa a pasta temporária do sistema como cache)
 //   node scripts/projetos.mjs D:\cache   (outra pasta de cache)
 //
-// Fontes: dados abertos do Senado (autorias e relatorias do Flávio) e da Câmara
+// Fontes: dados abertos do Senado (autorias e relatorias do Flávio), a lista dele na Alerj
+// (scripts/dados/alerj-flavio.json, gerada por scripts/alerj_flavio.py) e dados da Câmara
 // (projetos do Lula como deputado e tudo o que o Poder Executivo enviou nos governos
 // dele; as medidas provisórias vêm do Senado, que registra a lei gerada por cada uma). Os arquivos anuais da Câmara são grandes (até ~50 MB): ficam no cache.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -60,10 +61,70 @@ function ementa(texto) {
   if (nova >= 0) t = t.slice(nova).replace(/^NOVA EMENTA\s*:\s*/i, '');
   const letras = t.replace(/[^A-Za-zÀ-ú]/g, '');
   if (letras && letras === letras.toUpperCase()) {
+    const original = t;
     t = t.toLowerCase().replace(/(^|[.!?]\s+)(\p{L})/gu, (_, a, b) => a + b.toUpperCase());
+    // siglas voltam a ser maiúsculas: as conhecidas e as explicadas no texto ("– CMPV", "(UERJ)")
+    const siglas = new Set([
+      ...SIGLAS,
+      ...[...original.matchAll(/(?:[–-]\s*|\()([A-ZÀ-Ú]{2,8})\b/g)].map((m) => m[1]),
+    ]);
+    t = t.replace(/\p{L}+/gu, (w) => (siglas.has(w.toUpperCase()) ? w.toUpperCase() : w));
+    t = t.replace(/\brio de janeiro\b/gi, 'Rio de Janeiro').replace(/\bbrasil\b/g, 'Brasil');
   }
   return t;
 }
+
+/** Siglas comuns nas ementas antigas, que ficam em maiúsculas. */
+const SIGLAS = [
+  'RJ',
+  'UERJ',
+  'UENF',
+  'UEZO',
+  'FAETEC',
+  'FAPERJ',
+  'CEDAE',
+  'DETRAN',
+  'PM',
+  'PMERJ',
+  'CBMERJ',
+  'SUS',
+  'ICMS',
+  'IPVA',
+  'ITD',
+  'CNH',
+  'ALERJ',
+  'OAB',
+  'ONG',
+  'PROCON',
+  'DEGASE',
+  'SEAP',
+  'TCE',
+  'BRT',
+  'VLT',
+  'HIV',
+  'AIDS',
+  'CPF',
+  'CNPJ',
+  'INSS',
+  'FGTS',
+  'CLT',
+  'MEC',
+  'IBGE',
+  'BNDES',
+  'PIS',
+  'PASEP',
+  'IPI',
+  'IR',
+  'IOF',
+  'SFH',
+  'BNH',
+  'CEF',
+  'PETROBRAS',
+  'ONU',
+  'STF',
+  'STJ',
+  'TSE',
+];
 
 /**
  * Situação em quatro grupos, com o texto oficial guardado junto:
@@ -294,10 +355,22 @@ function gravar(id, conteudo) {
 }
 
 const flavio = await senadoFlavio();
+// a Alerj não tem API: a lista vem pronta do scripts/alerj_flavio.py
+const alerj = JSON.parse(
+  readFileSync(join(import.meta.dirname, 'dados', 'alerj-flavio.json'), 'utf8'),
+).map((i) => ({ ...i, ementa: ementa(i.ementa) }));
 gravar('flavio', {
   id: 'flavio',
   geradoEm: HOJE,
   cargos: [
+    {
+      key: 'alerj',
+      label: 'Deputado estadual no RJ (Alerj)',
+      period: '2003–2019',
+      fonte: 'Alerj — sistema de proposições',
+      fonteUrl:
+        'https://alerjln1.alerj.rj.gov.br/scpro1519.nsf/flaviobolsonaroint?OpenForm&ExpandView',
+    },
     {
       key: 'senado',
       label: 'Senador pelo RJ',
@@ -307,14 +380,14 @@ gravar('flavio', {
     },
   ],
   avisos: [
-    'Os projetos dos 16 anos como deputado estadual no Rio (Alerj) não estão nesta lista: o sistema da Alerj não oferece consulta por autor que o site consiga baixar. Segundo levantamento da Folha, foram 208 propostas, das quais 51 viraram lei estadual.',
+    'Na Alerj, "autor" é quem aparece primeiro na lista de autores e "coautor" é quem assina junto. As resoluções que viraram norma são, na maioria, homenagens (Medalha Tiradentes e títulos de benemérito). A contagem é do site, feita no sistema da Alerj; a Folha publicou outra contagem (208 propostas, 51 leis), com critério não informado.',
     ...(flavio.relatorias
       ? []
       : [
           'As relatorias não estão nesta lista porque o serviço do Senado que as fornece estava fora do ar na última atualização.',
         ]),
   ],
-  itens: ordenar(flavio.itens),
+  itens: ordenar([...flavio.itens, ...alerj]),
 });
 
 const lula = await camaraLula();

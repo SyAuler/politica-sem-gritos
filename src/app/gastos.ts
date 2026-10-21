@@ -18,9 +18,14 @@ const DECRETO_SUBSIDIO = f(
   'https://www2.camara.leg.br/legin/fed/decleg/2022/decretolegislativo-172-21-dezembro-2022-793529-republicacao-166629-pl.html',
 );
 const CPGF = f(
-  'Download de dados — Cartão de Pagamento do Governo Federal (arquivos mensais de 2013 a 2026)',
+  'Download de dados — Cartão de Pagamento do Governo Federal (arquivos mensais de 2013 a 2026; soma no script scripts/orcamento/cartao_presidencia.py)',
   'Portal da Transparência / CGU',
   'https://portaldatransparencia.gov.br/download-de-dados/cpgf',
+);
+const VIAGENS = f(
+  'Download de dados — Viagens a serviço (arquivos anuais de 2023 a 2025; soma no script scripts/orcamento/viagens_presidencia.py)',
+  'Portal da Transparência / CGU',
+  'https://portaldatransparencia.gov.br/download-de-dados/viagens',
 );
 const TCU_SIGILO = f(
   'TCU mostra 99% de sigilo no cartão corporativo da Presidência',
@@ -130,12 +135,16 @@ export const SPEND_RECORDS: SpendRecord[] = [
       },
       {
         label: 'Viagens da Presidência',
-        value: 'R$ 150,5 mi',
+        value: 'R$ 150,6 mi',
         context: 'Diárias, passagens e outros gastos de viagem de 2023 a 2025.',
         kind: 'cargo',
         detail:
           'Valor da Presidência no Portal da Transparência. O sistema não separa o gasto do próprio presidente. Os voos da FAB são sigilosos e não entram. Hospedagem e logística no exterior são pagas à parte, pelo Itamaraty.',
         notes: [
+          {
+            text: 'Por ano: R$ 48,8 milhões em 2023, R$ 56,2 milhões em 2024 e R$ 45,5 milhões em 2025, já descontadas as devoluções. São cerca de 43 mil processos de viagem de servidores do órgão. Cerca de 60% é passagem; o resto, quase todo diárias. O Aos Fatos cita R$ 150,5 milhões; a diferença vem de atualizações do arquivo do Portal (versão de set/2026).',
+            sources: [VIAGENS],
+          },
           {
             text: 'Viagens internacionais pagas pelo Itamaraty: R$ 65,9 milhões em 2023 (62 dias fora do país, R$ 27,8 milhões só de hospedagem) e R$ 44,4 milhões em 2025 (16 viagens a 19 países). O valor de 2024 não foi localizado.',
             sources: [
@@ -188,6 +197,7 @@ export const SPEND_RECORDS: SpendRecord[] = [
           },
         ],
         sources: [
+          VIAGENS,
           f(
             'Lula não gastou R$ 7 bilhões em viagens (dados do Portal da Transparência)',
             'Aos Fatos',
@@ -201,24 +211,24 @@ export const SPEND_RECORDS: SpendRecord[] = [
         context: 'De jan/2023 a mai/2026. Cerca de 99% é sigiloso.',
         kind: 'cargo',
         detail:
-          'Gastos com o cartão de pagamento do governo no órgão Presidência da República, que inclui a estrutura que serve ao presidente (segurança, residências, viagens). Nos gastos sigilosos não se sabe quem recebeu nem o que foi comprado. Em valores de 2025 (corrigidos pelo IPCA), a média foi de R$ 25,2 milhões por ano em 2023–2025; nos governos anteriores com dados disponíveis, R$ 26,4 milhões.',
+          'Gastos com o cartão de pagamento do governo no órgão Presidência da República, que inclui a estrutura que serve ao presidente (segurança, residências, viagens). Nos gastos sigilosos não se sabe quem recebeu nem o que foi comprado. Em valores de 2025 (corrigidos pelo IPCA), a média foi de R$ 25,2 milhões por ano em 2023–2025; nos governos de 2013 a 2022, R$ 24,3 milhões.',
         yearly: {
           mainLabel: 'Governo atual',
-          referenceLabel: 'Média dos governos anteriores com dados (2013–2016 e 2019–2022)',
+          referenceLabel: 'Média dos governos anteriores (2013–2022)',
           unit: 'em R$ de 2025, corrigidos pelo IPCA',
           rows: [
-            { year: '2023', main: 25_880_000, reference: 26_350_000 },
-            { year: '2024', main: 27_150_000, reference: 26_350_000 },
-            { year: '2025', main: 22_570_000, reference: 26_350_000 },
+            { year: '2023', main: 25_880_000, reference: 24_260_000 },
+            { year: '2024', main: 27_150_000, reference: 24_260_000 },
+            { year: '2025', main: 22_570_000, reference: 24_260_000 },
           ],
         },
         notes: [
           {
-            text: 'A média dos governos anteriores usa os anos que o site conseguiu baixar do Portal da Transparência: 2013 a 2016 (Dilma e, em 2016, Temer: R$ 28,2 milhões por ano) e 2019 a 2022 (Bolsonaro, R$ 24,5 milhões por ano). Faltam 2017 e 2018, porque o Portal passou a pedir verificação humana no meio do download.',
+            text: 'Por governo, em valores de 2025: Dilma (2013–2015), R$ 31,2 milhões por ano; 2016, ano em que Dilma e Temer governaram, R$ 19,4 milhões; Temer (2017–2018), R$ 15,9 milhões por ano; Bolsonaro (2019–2022), R$ 24,5 milhões por ano. Os arquivos do Portal começam em 2013.',
             sources: [CPGF, IPCA],
           },
           {
-            text: 'Sobre o sigilo: o TCU apontou 99,6% de gastos sigilosos de jan/2023 a abr/2025 e citou de 64% a 79% nos governos Dilma e Temer. Nos arquivos do Portal, porém, a parte marcada como sigilosa já passava de 97% em todos os anos de 2013 a 2016. O site não conseguiu conciliar os dois critérios.',
+            text: 'Sobre o sigilo: o TCU apontou 99,6% de gastos sigilosos de jan/2023 a abr/2025 e citou de 64% a 79% nos governos Dilma e Temer. Nos arquivos do Portal, porém, a parte marcada como sigilosa passa de 97% em todos os anos desde 2013. O site não conseguiu conciliar os dois critérios.',
             sources: [TCU_SIGILO, CPGF],
           },
         ],

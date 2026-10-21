@@ -6,18 +6,6 @@ apague-o daqui e tire o aviso correspondente do site.
 
 ## Lista completa de projetos (`scripts/projetos.mjs`)
 
-### Projetos do Flávio na Alerj (2003–2019)
-- **Falta:** a lista dos projetos dele como deputado estadual. Hoje o site só mostra o resumo da
-  Folha (208 propostas, 51 viraram lei estadual) e avisa na página do candidato.
-- **Por quê:** o sistema antigo da Alerj (Lotus Notes) respondeu no começo e depois parou de
-  responder às consultas (out/2026). Não há consulta por autor pronta.
-- **Onde tentar:** `http://alerjln1.alerj.rj.gov.br/scpro0307.nsf/vlei?OpenView` e as bases das
-  outras legislaturas (`scpro0711.nsf`, `scpro1115.nsf`, `scpro1519.nsf`). As visões são agrupadas
-  e paginadas: baixar em páginas pequenas, com pausa entre as consultas. Outra saída é pedir a lista
-  à Alerj pela Lei de Acesso à Informação.
-- **Quando resolver:** acrescentar o cargo `alerj` no script, tirar o aviso de `projetos-flavio.json`
-  e conferir se o total bate com o da Folha.
-
 ### Emendas do Lula na Constituinte (1987–1988)
 - **Falta:** a lista das 41 emendas e quais foram aprovadas. Hoje o site usa o levantamento do
   Congresso em Foco (41 apresentadas, 7 aprovadas) e avisa na página do candidato.
@@ -62,17 +50,18 @@ apague-o daqui e tire o aviso correspondente do site.
 
 ## Gastos de dinheiro público (`src/app/gastos.ts`)
 
-- **Portal da Transparência pede captcha:** ficaram sem dado o cartão corporativo da Presidência de
-  jun a set/2026, o orçamento executado da Presidência (órgão 20000) e o arquivo de viagens. Tentar
+- **Portal da Transparência pede captcha** (o cartão corporativo baixa sem verificação direto de
+  `dadosabertos-download.cgu.gov.br/PortalDaTransparencia/saida/cpgf/AAAAMM_CPGF.zip`; as viagens
+  não): ficaram sem dado o cartão corporativo da Presidência de
+  jun a set/2026 e o orçamento executado da Presidência (órgão 20000). Os arquivos de viagens de
+  2023 a 2025 foram baixados pelo navegador e somados. Tentar
   pelo navegador ou com uma chave da API (cadastro gratuito no Portal).
-- **Média do cartão corporativo da Presidência:** usa 2013–2016 e 2019–2022. Faltam 2017 e 2018
-  (governo Temer): o Portal pede verificação humana depois de alguns downloads. Já baixados: até
-  mai/2017. Baixar os meses que faltam em `download-de-dados/cpgf/AAAAMM` e recalcular (órgão
-  20101, corrigido pelo IPCA a valores de 2025). Os arquivos antes de 2013 não existem no Portal.
 - **Sigilo do cartão:** nos arquivos do Portal, a parte marcada como sigilosa passa de 97% em
-  todos os anos com dados (2013–2016 e 2019–2026), mas o TCU cita de 64% a 79% nos governos Dilma e Temer. Entender o critério do TCU.
-- **Viagens:** falta a divisão por ano dos R$ 150,5 milhões da Presidência (2023–2025) e o gasto
-  do Itamaraty com viagens internacionais em 2024.
+  todos os anos desde 2013, mas o TCU cita de 64% a 79% nos governos Dilma e Temer. Entender o critério do TCU.
+- **Viagens:** falta o gasto do Itamaraty com as viagens internacionais do presidente em 2024. O
+  arquivo de viagens do Portal não serve para isso: no órgão Relações Exteriores ele traz as viagens
+  dos servidores do ministério, não a hospedagem e a logística das comitivas. Para ter uma média dos
+  governos anteriores, como no cartão, faltam os arquivos de 2013 a 2022 (o Portal pede captcha).
 - **Diferença no cartão corporativo:** a soma do site para 2023–2025 (R$ 74,1 milhões no órgão
   superior) não bate com os R$ 45,2 milhões do Aos Fatos; o total do TCU bate com o do site.
   Entender o recorte antes de citar comparações de terceiros.
