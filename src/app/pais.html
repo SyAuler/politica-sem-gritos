@@ -1,0 +1,703 @@
+<app-site-header atual="pais" />
+
+<main>
+  <header class="pais-head">
+    <p class="section-kicker"><span>O país em números</span> Contexto</p>
+    <h1 class="section-title">Como o país chegou até aqui</h1>
+    <p class="section-lead">
+      Os dados da economia ano a ano e para onde vai o dinheiro dos impostos. Esta página não
+      compara os candidatos: mostra o país que qualquer um dos dois vai governar. Para a comparação,
+      volte à <a href="/">página principal</a>.
+    </p>
+    <nav class="pais-nav" aria-label="Partes desta página">
+      <a href="#historico">1. A economia ano a ano</a>
+      <a href="#impostos">2. Para onde vão os impostos</a>
+    </nav>
+  </header>
+
+  <section id="historico">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 1 de 2</span> A série histórica</p>
+      <h2 class="section-title">O que os dados mostram</h2>
+      <p class="section-lead">
+        Séries oficiais do IBGE e do Banco Central, ano a ano. Os governos aparecem só como legenda
+        de período: o gráfico não atribui culpa nem mérito.
+      </p>
+    </header>
+
+    @for (ind of indicators; track ind.id) {
+      <app-paper class="paper indicator" variant="liso" [faixa]="true">
+        <span class="tag fato">Fato</span>
+        <h3>
+          {{ ind.title }} <small>{{ ind.unit }}</small>
+        </h3>
+        <p>
+          @let d = descParts(ind);
+          <!-- prettier-ignore -->
+          <span>{{ d[0] }}@if (d[1]) {<mark class="hl">{{ d[1] }}</mark>}{{ d[2] }}</span
+          >{{ ' ' }}
+          <strong>Dado mais recente ({{ ind.latest.label }}): {{ ind.latest.value }}.</strong>
+        </p>
+        <details class="how-read">
+          <summary><span aria-hidden="true">?</span> Como ler este gráfico</summary>
+          <ol>
+            @for (step of ind.howToRead; track $index) {
+              <li>{{ step }}</li>
+            }
+          </ol>
+        </details>
+
+        @if (ind.lines; as lines) {
+          <div class="mode-switch" role="group" aria-label="Como mostrar os valores">
+            <button [class.active]="incomeMode() === 'real'" (click)="incomeMode.set('real')">
+              Valores de hoje
+            </button>
+            <button [class.active]="incomeMode() === 'nominal'" (click)="incomeMode.set('nominal')">
+              Valores da época
+            </button>
+          </div>
+          @let lc = lineChart(lines);
+          <p class="chart-hint" aria-hidden="true">
+            Deslize o gráfico para o lado para ver todos os anos →
+          </p>
+          <div class="line-chart">
+            <div class="line-stage">
+              <svg
+                [attr.viewBox]="'0 0 ' + lc.W + ' ' + lc.H"
+                role="img"
+                [attr.aria-label]="
+                  ind.title +
+                  ', ' +
+                  (incomeMode() === 'real' ? 'valores de hoje' : 'valores da época')
+                "
+              >
+                @for (t of lc.ticks; track t.label) {
+                  <line
+                    class="grid"
+                    [attr.x1]="70"
+                    [attr.x2]="lc.W - 24"
+                    [attr.y1]="t.y"
+                    [attr.y2]="t.y"
+                  />
+                  <text class="tick" [attr.x]="62" [attr.y]="t.y + 5">{{ t.label }}</text>
+                }
+                @for (yr of lc.years; track yr.label) {
+                  <text class="year" [attr.x]="yr.x" [attr.y]="lc.baseY + 24">{{ yr.label }}</text>
+                }
+                @for (g of lc.govs; track $index) {
+                  <line
+                    class="gov"
+                    [attr.x1]="g.x1"
+                    [attr.x2]="g.x2"
+                    [attr.y1]="lc.baseY + 40"
+                    [attr.y2]="lc.baseY + 40"
+                  />
+                  <!-- "Dilma/Temer" quebra em duas linhas para caber no espaço de um ano -->
+                  <text class="gov" [attr.y]="lc.baseY + (g.parts.length > 1 ? 58 : 62)">
+                    @for (part of g.parts; track $index) {
+                      <tspan [attr.x]="(g.x1 + g.x2) / 2" [attr.dy]="$index ? 17 : 0">
+                        {{ part }}
+                      </tspan>
+                    }
+                  </text>
+                }
+                @for (l of lc.lines; track l.key) {
+                  <g [class]="'serie ' + l.key">
+                    <path [attr.d]="l.d" />
+                    @for (pt of l.pts; track pt.year) {
+                      <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" />
+                      <!-- área de toque maior, invisível, que abre o balão -->
+                      <circle
+                        class="hit"
+                        [attr.cx]="pt.x"
+                        [attr.cy]="pt.y"
+                        r="16"
+                        tabindex="0"
+                        role="button"
+                        [attr.aria-label]="l.label + ', ' + pt.year + ': ' + reais(pt.v)"
+                        (mouseenter)="hoverPoint.set({ key: l.key, year: pt.year })"
+                        (mouseleave)="hoverPoint.set(null)"
+                        (focus)="hoverPoint.set({ key: l.key, year: pt.year })"
+                        (blur)="hoverPoint.set(null)"
+                        (click)="toggleHover(l.key, pt.year)"
+                      />
+                    }
+                    <text class="val" [attr.x]="l.first.x" [attr.y]="l.first.y - 12">
+                      {{ reais(l.first.v) }}
+                    </text>
+                    <text class="val end" [attr.x]="l.last.x" [attr.y]="l.last.y - 12">
+                      {{ reais(l.last.v) }}
+                    </text>
+                  </g>
+                }
+              </svg>
+              @for (l of lc.lines; track l.key) {
+                @for (pt of l.pts; track pt.year) {
+                  @if (hoverPoint()?.key === l.key && hoverPoint()?.year === pt.year) {
+                    <div
+                      class="point-tip"
+                      [class.left]="pt.left > 75"
+                      [class.below]="pt.top < 45"
+                      [class.right]="pt.left < 20"
+                      [style.left.%]="pt.left"
+                      [style.top.%]="pt.top"
+                      aria-hidden="true"
+                    >
+                      <small>{{ l.label }} · {{ pt.year }}</small>
+                      <strong>{{ reais(pt.v) }}</strong>
+                      @if (pt.ratio) {
+                        <span>≈ {{ fmt1(pt.ratio) }} salários mínimos</span>
+                      }
+                      <em>{{
+                        incomeMode() === 'real' ? 'em valores de hoje' : 'em valores da época'
+                      }}</em>
+                    </div>
+                  }
+                }
+              }
+            </div>
+          </div>
+          <ul class="line-legend">
+            @for (l of lc.lines; track l.key) {
+              <li [class]="l.key"><i></i>{{ l.label }}</li>
+            }
+          </ul>
+        } @else if (ind.chart === 'divida') {
+          <app-divida [series]="ind.series" />
+        } @else {
+          <p class="chart-hint" aria-hidden="true">
+            Deslize o gráfico para o lado para ver todos os anos →
+          </p>
+          <div class="chart">
+            @for (g of groups(ind); track $index) {
+              <div class="chart-group" [style.flex-grow]="g.points.length">
+                <div class="bars">
+                  @for (p of g.points; track p.year) {
+                    <div
+                      class="col"
+                      [title]="p.year + ': ' + fmtValue(ind, p.value)"
+                      [style.--h.%]="(p.value / maxValue(ind)) * 100"
+                    >
+                      <div class="plot">
+                        <span class="val">{{ fmtBar(ind, p.value) }}</span>
+                        <div class="fill"></div>
+                      </div>
+                      <span class="year">{{ p.year % 100 < 10 ? '0' : '' }}{{ p.year % 100 }}</span>
+                    </div>
+                  }
+                </div>
+                <p class="gov">{{ g.government }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="cannot">
+          <h4 class="h5">O que este dado não permite concluir</h4>
+          <ul>
+            @for (c of ind.cannotConclude; track c) {
+              <li>{{ c }}</li>
+            }
+          </ul>
+        </div>
+        <app-source-links [sources]="ind.sources" />
+      </app-paper>
+    }
+
+    <app-paper class="paper averages" variant="liso" [faixa]="true">
+      <span class="tag fato">Cálculo do site</span>
+      <h3>Média por período de governo</h3>
+      <p>Média simples dos anos de cada período, a partir das mesmas séries dos gráficos acima.</p>
+      <div class="averages-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Período</th>
+              @for (ind of indicators; track ind.id) {
+                <th scope="col">{{ ind.title }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (g of govAverages; track g.from) {
+              <tr>
+                <th scope="row">
+                  {{ g.government }}
+                  <small>{{ g.from }}{{ g.to !== g.from ? '–' + g.to : '' }}</small>
+                </th>
+                @for (v of g.values; track $index) {
+                  <td>{{ v === null ? '—' : fmtValue(indicators[$index], v) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        “—” = sem dado na série (a dívida pública na metodologia atual do Banco Central começa em
+        2006, e o desemprego atual do IBGE, em 2012). 2016 aparece à parte porque teve dois
+        presidentes, e o período mais recente vai só até 2025. Média de um período não mede só o
+        governo: crises externas, pandemia e decisões do Banco Central também pesam (veja “O que
+        este dado não permite concluir” em cada gráfico).
+      </p>
+    </app-paper>
+  </section>
+
+  <section id="impostos">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 2 de 2</span> O dinheiro público</p>
+      <h2 class="section-title">Para onde vão os impostos</h2>
+      <p class="section-lead">
+        Quanto o governo federal arrecada, em que gasta e quanto custa cada instituição que os
+        impostos sustentam. Números oficiais, corrigidos pela inflação quando comparam anos.
+      </p>
+    </header>
+
+    <div class="tax-heads">
+      @for (h of taxHeadlines; track h.label; let i = $index) {
+        <app-paper
+          class="paper stat"
+          variant="postit"
+          [cor]="postitColors[i % postitColors.length]"
+        >
+          <span class="tag fato">Fato</span>
+          <p class="stat-label">{{ h.label }}</p>
+          <p class="stat-value">{{ h.value }}</p>
+          <p class="stat-detail">{{ h.detail }}</p>
+          <app-source-links [sources]="h.sources" />
+        </app-paper>
+      }
+    </div>
+
+    <!-- de cada R$ 100 -->
+    <app-paper class="paper tax-per100" variant="liso" [faixa]="true">
+      <span class="tag fato">Fato</span>
+      <h3>De cada R$ 100 que o governo federal gastou em 2025</h3>
+      <p class="note">Cada quadradinho é R$ 1. Sem contar a rolagem da dívida.</p>
+      <div class="per100">
+        <div
+          class="waffle"
+          role="img"
+          aria-label="Grade de 100 quadrados mostrando a divisão do gasto federal de 2025 por área"
+        >
+          @for (sq of per100Squares; track $index) {
+            <span
+              class="sq"
+              [style.background]="sq.color"
+              [class.dim]="per100Focus() && per100Focus() !== sq.key"
+              [attr.title]="sq.label + ': R$ ' + sq.squares + ' de cada R$ 100'"
+            ></span>
+          }
+        </div>
+        <ul class="per100-legend">
+          @for (p of per100; track p.key) {
+            <li
+              (mouseenter)="per100Focus.set(p.key)"
+              (mouseleave)="per100Focus.set(null)"
+              (focusin)="per100Focus.set(p.key)"
+              (focusout)="per100Focus.set(null)"
+              tabindex="0"
+            >
+              <span class="sw" [style.background]="p.color" aria-hidden="true"></span>
+              <span class="per100-value">R$ {{ p.squares }}</span>
+              <span class="per100-text">
+                <strong>{{ p.label }}</strong>
+                <small>{{ money(p.bi * 1e9) }} no ano · {{ p.note }}</small>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+      <app-source-links [sources]="[taxSources.siop, taxSources.rreo]" />
+    </app-paper>
+
+    <!-- entrada x saída, ano a ano -->
+    <app-paper class="paper tax-io" variant="liso" [faixa]="true">
+      <span class="tag fato">Fato</span>
+      <h3>
+        Quanto entra e quanto sai, ano a ano
+        <small>R$ bilhões de 2025, corrigidos pela inflação</small>
+      </h3>
+      <ul class="io-legend">
+        <li>
+          <button type="button" class="io-key" [class.on]="!ioFocus()" (click)="ioFocus.set(null)">
+            <span class="sw io-in-sw" aria-hidden="true"></span> Entrada (arrecadação)
+          </button>
+        </li>
+        @for (g of ioGroups; track g.key) {
+          <li>
+            <button
+              type="button"
+              class="io-key"
+              [class.on]="ioFocus() === g.key"
+              [class.dim]="ioFocus() && ioFocus() !== g.key"
+              [attr.aria-pressed]="ioFocus() === g.key"
+              (click)="toggleIo(g.key)"
+            >
+              <span class="sw" [style.background]="g.color" aria-hidden="true"></span> {{ g.label }}
+            </button>
+          </li>
+        }
+      </ul>
+      <p class="tax-series-note">{{ ioNote() }}</p>
+      <p class="chart-hint" aria-hidden="true">
+        Deslize o gráfico para o lado para ver todos os anos →
+      </p>
+      <div class="io-scroll">
+        <div
+          class="io-chart"
+          role="img"
+          aria-label="Arrecadação e gasto federal por ano, de 2003 a 2025; os valores estão na tabela abaixo"
+        >
+          @for (g of ioChart().groups; track $index) {
+            <div class="io-group" [style.flex-grow]="g.rows.length">
+              <div class="io-years">
+                @for (r of g.rows; track r.year) {
+                  <div class="io-year">
+                    <div class="io-plot" [class.focused]="ioFocus()">
+                      @if (!ioFocus()) {
+                        <span
+                          class="io-in"
+                          [style.height.%]="pctOf(r.entrada, ioChart().max)"
+                          [attr.title]="r.year + ' · entrada: R$ ' + fmtBiUnit(r.entrada)"
+                        ></span>
+                      }
+                      <span
+                        class="io-out"
+                        [style.height.%]="pctOf(r.focused, ioChart().max)"
+                        [attr.title]="r.year + ' · saída: R$ ' + fmtBiUnit(r.total)"
+                      >
+                        @if (ioFocus()) {
+                          <span class="io-val">{{ fmtBiUnit(r.focused) }}</span>
+                        }
+                        @for (seg of r.segs; track seg.key) {
+                          @if (!ioFocus() || ioFocus() === seg.key) {
+                            <span
+                              class="io-seg"
+                              [style.flex-grow]="seg.value"
+                              [style.background]="seg.color"
+                              [attr.title]="
+                                r.year + ' · ' + seg.label + ': R$ ' + fmtBiUnit(seg.value)
+                              "
+                            ></span>
+                          }
+                        }
+                      </span>
+                    </div>
+                    <span class="year">{{ r.year % 100 < 10 ? '0' : '' }}{{ r.year % 100 }}</span>
+                  </div>
+                }
+              </div>
+              <p class="gov">{{ g.government }}</p>
+            </div>
+          }
+        </div>
+      </div>
+      <p class="note">
+        A diferença entre as duas barras não é o déficit oficial: o governo também recebe outras
+        receitas (royalties, dividendos de estatais) e parte do gasto é paga com dívida nova. Os
+        governos aparecem só como legenda de período; 2020 foge do padrão por causa da pandemia.
+      </p>
+      <details class="table-view">
+        <summary>Ver os números em tabela</summary>
+        <table>
+          <caption>
+            Valores em reais de 2025, corrigidos pela inflação (bi = bilhões; tri = trilhões)
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Ano</th>
+              <th scope="col">Entrada</th>
+              <th scope="col">Saída</th>
+              @for (g of ioGroups; track g.key) {
+                <th scope="col">{{ g.label }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of ioChart().rows; track r.year) {
+              <tr>
+                <th scope="row">{{ r.year }}</th>
+                <td>R$ {{ fmtBiUnit(r.entrada) }}</td>
+                <td>R$ {{ fmtBiUnit(r.total) }}</td>
+                @for (seg of r.segs; track seg.key) {
+                  <td>R$ {{ fmtBiUnit(seg.value) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </details>
+      <app-source-links
+        [sources]="[taxSources.rfb, taxSources.siop, taxSources.ipca, taxSources.repo]"
+      />
+    </app-paper>
+
+    <!-- quanto custa cada instituição -->
+    <h3 class="impact-title">Quanto custa cada instituição</h3>
+    <p class="section-lead">
+      Quanto cada brasileiro pagou em 2025, em média, para manter cada instituição federal. Clique
+      num card para ver a evolução desde 2013 e o que entra na conta.
+    </p>
+
+    <div class="org-grid">
+      @for (o of orgs; track o.key; let i = $index) {
+        <app-paper
+          class="paper hl-card org-card"
+          variant="postit"
+          [cor]="postitColors[i % postitColors.length]"
+        >
+          <p class="hl-label">{{ o.label }}</p>
+          <p class="hl-value">R$ {{ fmtCents(o.perCapita2025) }}</p>
+          <p class="hl-context">
+            por habitante · {{ money(o.pago2025 * 1e6) }} no ano · {{ fmtPct(o.pctUniao2025) }} do
+            gasto federal
+          </p>
+          @if (orgScope[o.key]; as scope) {
+            <p class="org-scope">{{ scope }}</p>
+          }
+
+          <button
+            type="button"
+            class="hl-toggle"
+            [attr.aria-expanded]="orgOpen() === o.key"
+            aria-controls="org-panel"
+            (click)="orgOpen.set(orgOpen() === o.key ? null : o.key)"
+          >
+            {{ orgOpen() === o.key ? 'Fechar detalhes' : 'Ver detalhes' }}
+            <span aria-hidden="true">{{ orgOpen() === o.key ? '▴' : '▾' }}</span>
+          </button>
+        </app-paper>
+      }
+    </div>
+
+    @if (orgPanel(); as o) {
+      <app-paper class="paper hl-panel" variant="liso" [faixa]="true" id="org-panel">
+        <span class="tag fato">Fato</span>
+        <h4 class="case-group-title">{{ o.label }}</h4>
+        <p>
+          Em 2025: {{ money(o.pago2025 * 1e6) }} pagos, {{ fmtNum(o.pessoalPct2025) }}% com pessoal
+          ({{ fmtNum(o.inativosPct2025) }}% só com aposentados e pensionistas).
+          @if (o.perMember2025) {
+            Dividido pelo número de membros, dá {{ money(o.perMember2025 * 1e6) }} por
+            {{ o.member }}
+            por ano.
+          }
+        </p>
+        <div class="hl-years">
+          <p class="hl-years-legend">
+            <span><i class="key-main"></i>Despesa paga no ano</span>
+            <small>em R$ de 2025, corrigidos pelo IPCA</small>
+          </p>
+          @for (row of o.series; track row.year) {
+            <div class="hl-year">
+              <span class="hl-year-label">{{ row.year }}</span>
+              <span class="hl-track">
+                <span class="hl-bar" [style.width.%]="pctOf(row.real, orgMax(o.series))"></span>
+              </span>
+              <span class="hl-year-value">{{ money(row.real * 1e6) }}</span>
+            </div>
+          }
+        </div>
+        @if (orgNotes[o.key]; as notes) {
+          <ul class="hl-notes">
+            @for (n of notes; track n.text) {
+              <li>
+                {{ n.text }}
+                <app-source-links [sources]="n.sources" />
+              </li>
+            }
+          </ul>
+        }
+        <app-source-links
+          [sources]="[taxSources.siop, taxSources.populacao, taxSources.ipca, taxSources.repo]"
+        />
+      </app-paper>
+    }
+
+    <app-paper class="paper tax-jud" variant="liso" [faixa]="true">
+      <span class="tag fato">Fato</span>
+      <h3>O Judiciário do país inteiro</h3>
+      <p class="tax-big">
+        {{ judiciary.total }} <small>· {{ judiciary.perCapita }} por habitante em 2025</small>
+      </p>
+      <p>{{ judiciary.lead }}</p>
+      <div class="jud-grid">
+        <div>
+          <h4 class="case-group-title">Por ramo da Justiça</h4>
+          @for (b of judiciary.branches; track b.label) {
+            <div class="hl-year jud-row">
+              <span class="hl-year-label"
+                >{{ b.label }}
+                @if (b.note) {
+                  <small>{{ b.note }}</small>
+                }
+              </span>
+              <span class="hl-track">
+                <span class="hl-bar" [style.width.%]="pctOf(b.value, judMax)"></span>
+              </span>
+              <span class="hl-year-value">R$ {{ fmtNum(b.value) }} bi</span>
+            </div>
+          }
+        </div>
+        <div>
+          <h4 class="case-group-title">Para onde vai</h4>
+          <dl class="jud-facts">
+            @for (k of judiciary.facts; track k.label) {
+              <div>
+                <dt>{{ k.value }}</dt>
+                <dd>{{ k.label }}</dd>
+              </div>
+            }
+          </dl>
+          <p class="note">{{ judiciary.perMagistrate }}</p>
+        </div>
+      </div>
+      <div class="jud-line-head">
+        <h4 class="case-group-title">Evolução desde 2013, em reais de 2025</h4>
+        <div class="jud-mode" role="group" aria-label="Mostrar">
+          <button
+            type="button"
+            [class.on]="judMode() === 'perCapita'"
+            [attr.aria-pressed]="judMode() === 'perCapita'"
+            (click)="judMode.set('perCapita')"
+          >
+            Por habitante
+          </button>
+          <button
+            type="button"
+            [class.on]="judMode() === 'total'"
+            [attr.aria-pressed]="judMode() === 'total'"
+            (click)="judMode.set('total')"
+          >
+            Total
+          </button>
+        </div>
+      </div>
+      <p class="tax-series-note">{{ judLine().note }}</p>
+      <div class="jud-scroll">
+        <svg
+          class="jud-line"
+          [attr.viewBox]="'0 0 ' + judLine().W + ' ' + judLine().H"
+          role="img"
+          [attr.aria-label]="judLine().note"
+        >
+          @for (g of judLine().grid; track g.label) {
+            <line
+              class="grid"
+              [attr.x1]="judLine().left"
+              [attr.x2]="judLine().W - judLine().right"
+              [attr.y1]="g.y"
+              [attr.y2]="g.y"
+            />
+            <text class="axis" [attr.x]="judLine().left - 8" [attr.y]="g.y + 4">{{ g.label }}</text>
+          }
+          <path class="line" [attr.d]="judLine().path" />
+          @for (p of judLine().points; track p.year; let last = $last) {
+            <g class="pt">
+              <title>{{ p.year }}: {{ p.label }}</title>
+              <circle class="hit" [attr.cx]="p.x" [attr.cy]="p.y" r="16" />
+              <circle class="dot" [class.key]="p.key" [attr.cx]="p.x" [attr.cy]="p.y" r="5" />
+              @if (p.key) {
+                <text class="lbl" [class.end]="last" [attr.x]="p.x" [attr.y]="p.y - 14">
+                  {{ p.label }}
+                </text>
+              }
+              <text class="yr" [attr.x]="p.x" [attr.y]="judLine().H - 8">{{ p.year }}</text>
+            </g>
+          }
+        </svg>
+      </div>
+      <p class="note">
+        Sem o STF, que não entra no relatório do CNJ. Valores corrigidos pelo próprio CNJ.
+      </p>
+      <ul class="hl-notes">
+        <li>{{ judiciary.international }}</li>
+        <li>{{ judiciary.counterpoint }}</li>
+        <li>{{ judiciary.why }}</li>
+      </ul>
+      <app-source-links [sources]="judiciary.sources" />
+    </app-paper>
+
+    <div class="columns tax-extra">
+      <app-paper class="paper spend-items" variant="liso">
+        <span class="tag fato">Fato</span>
+        <h4 class="case-group-title">Fundos dos partidos e das campanhas</h4>
+        <p>{{ partyFunds.detail }}</p>
+        <div class="hl-years">
+          <p class="hl-years-legend">
+            <span><i class="key-main"></i>Fundo eleitoral</span>
+            <span><i class="key-alt"></i>Fundo partidário</span>
+          </p>
+          @for (row of partyFunds.rows; track row.year) {
+            <div class="hl-year">
+              <span class="hl-year-label">{{ row.year }}</span>
+              <span class="hl-track fund-track">
+                <span class="hl-bar" [style.width.%]="pctOf(row.eleitoral, 5000)"></span>
+                <span class="hl-bar alt" [style.width.%]="pctOf(row.partidario, 5000)"></span>
+              </span>
+              <span class="hl-year-value"
+                >{{ money(row.eleitoral * 1e6) }}
+                <small>{{ money(row.partidario * 1e6) }}</small></span
+              >
+            </div>
+          }
+        </div>
+        <p class="note">{{ partyFunds.note }}</p>
+        <app-source-links [sources]="partyFunds.sources" />
+      </app-paper>
+
+      <app-paper class="paper spend-items tax-super" variant="liso">
+        <span class="tag fato">Fato</span>
+        <h4 class="case-group-title">Salários acima do teto</h4>
+        <p class="note">
+          O teto do funcionalismo é o salário de ministro do STF, R$ 46.366,19. Adicionais e
+          indenizações fazem muitos juízes e promotores receberem acima dele.
+        </p>
+        <ul class="hl-notes">
+          @for (n of supersalaries.official; track n.text) {
+            <li>
+              <span class="tag fato">Fato</span> {{ n.text }}
+              <app-source-links [sources]="n.sources" />
+            </li>
+          }
+          @for (n of supersalaries.estimates; track n.text) {
+            <li>
+              <span class="tag analise">Estimativa</span> {{ n.text }}
+              <app-source-links [sources]="n.sources" />
+            </li>
+          }
+        </ul>
+      </app-paper>
+    </div>
+
+    <app-paper class="paper tax-concentration" variant="liso" [faixa]="true">
+      <span class="tag analise">Análise</span>
+      <h3>Onde o dinheiro se concentra</h3>
+      <p class="note">
+        Os maiores pesos do gasto público, reunidos a partir dos números desta seção. Cada um vem
+        com um contraponto: concentração não é sinônimo de desperdício.
+      </p>
+      <div class="conc-grid">
+        @for (c of taxConcentration; track c.title) {
+          <div class="conc-item">
+            <h4>{{ c.title }}</h4>
+            <p>{{ c.text }}</p>
+            <p class="conc-counter"><strong>Contraponto.</strong> {{ c.counter }}</p>
+          </div>
+        }
+      </div>
+    </app-paper>
+
+    <app-paper class="paper reading" variant="jornal" rotulo="Análise" [tilt]="0.4">
+      <h3>Como ler esta parte</h3>
+      <ul class="law-reading">
+        @for (r of taxReading; track r) {
+          <li>{{ r }}</li>
+        }
+      </ul>
+    </app-paper>
+  </section>
+</main>
+
+<app-site-footer />

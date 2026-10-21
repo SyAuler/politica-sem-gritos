@@ -183,13 +183,7 @@ export interface ProjectFile {
  * anulado não é absolvido, e arquivado não é inocentado. O glossário do site explica.
  */
 export type CaseOutcome =
-  | 'condenado'
-  | 'anulado'
-  | 'absolvido'
-  | 'rejeitado'
-  | 'arquivado'
-  | 'andamento'
-  | 'sem-acusacao';
+  'condenado' | 'anulado' | 'absolvido' | 'rejeitado' | 'arquivado' | 'andamento' | 'sem-acusacao';
 
 /** Uma decisão ou fato marcante do caso, com a data e quem decidiu. */
 export interface CaseEvent {

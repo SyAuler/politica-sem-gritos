@@ -10,21 +10,24 @@ o material para decidir sozinha.
 
 ## O que o site mostra
 
+**Na página principal, a comparação entre os dois candidatos:**
+
 - **Como o país está hoje:** inflação, juros, desemprego e renda, em números oficiais.
 - **As propostas lado a lado:** 14 temas, cada proposta com a página do plano de governo registrado
   no TSE, o que cada plano deixa de dizer e, em "E na vida das pessoas?", o que ela pode mudar no
   dia a dia, com benefícios e riscos.
 - **Quem decide de verdade:** como ficou o Congresso eleito e o que isso muda para cada um.
-- **O que cada um já conseguiu aprovar:** leis, emendas e medidas, cargo por cargo, com o papel que
-  o candidato teve em cada uma. A lista completa de projetos fica numa página própria para cada
-  candidato, com o link da ficha oficial na Câmara ou no Senado.
-- **Processos e investigações:** cada caso de cada candidato com a decisão da Justiça, data e
-  fonte, e o que o desfecho significa (anulado não é absolvido; arquivado não é inocentado).
-- **Quanto custam aos cofres públicos:** os custos do mandato atual de cada um, sem comparar
-  cargos diferentes, com a média do próprio cargo como referência.
-- **Para onde vão os impostos:** quanto o governo federal arrecada, em que gasta (de cada R$ 100)
-  e quanto custa cada instituição por habitante, com as contas refeitas a partir dos dados oficiais.
-- **A série histórica:** os dados de cada governo ano a ano, sem atribuir culpa nem mérito.
+- **O histórico de cada um:** o que já conseguiu aprovar (com uma página com todos os projetos de
+  cada candidato e o link da ficha oficial), os processos e investigações com a decisão da Justiça
+  e o que o desfecho significa, e quanto o mandato atual custa aos cofres públicos.
+
+**Na página "O país em números", o contexto que vale para qualquer um dos dois:**
+
+- **A economia ano a ano desde 2003:** inflação, juros, desemprego, renda e dívida, com os governos
+  só como legenda de período.
+- **Para onde vão os impostos:** quanto o governo federal arrecada, em que gasta (de cada R$ 100),
+  quanto entra e quanto sai a cada ano e quanto custa cada instituição por habitante, com as contas
+  refeitas a partir dos dados oficiais.
 
 ## Como o site tenta ser justo
 

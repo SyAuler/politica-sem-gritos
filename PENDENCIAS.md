@@ -102,8 +102,6 @@ apague-o daqui e tire o aviso correspondente do site.
 - **Supersalários:** não há total oficial. Os números são estimativas de ONGs com metodologias
   diferentes entre si. Acompanhar a auditoria CNJ/CNMP prevista na decisão do STF de mar/2026.
 - **Senado:** valor da verba de gabinete do senador não localizado.
-- **Menu do topo:** com as seções novas, vale reorganizar o menu (ex.: "Histórico" agrupando leis,
-  processos e gastos; "Impostos" à parte).
 
 ## Fontes que bloqueiam acesso automático
 

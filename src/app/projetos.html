@@ -1,9 +1,4 @@
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="/">Política sem <span>Gritos</span></a>
-    <a class="back" href="/#leis">← Voltar para a comparação</a>
-  </div>
-</header>
+<app-site-header atual="historico" />
 
 <main>
   @if (candidate(); as c) {
@@ -277,3 +272,5 @@
     <p class="proj-msg">Candidato não encontrado. <a href="/">Voltar ao início</a>.</p>
   }
 </main>
+
+<app-site-footer />

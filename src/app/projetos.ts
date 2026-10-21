@@ -4,6 +4,8 @@ import { Title } from '@angular/platform-browser';
 import { CANDIDATES, LAW_ROLES } from './data';
 import { ProjectFile, ProjectItem, ProjectStatus } from './models';
 import { Glossario } from './glossario';
+import { SiteHeader } from './site-header';
+import { SiteFooter } from './site-footer';
 
 /** Os quatro grupos de situação, na ordem em que aparecem no gráfico e na legenda. */
 const STATUS: { key: ProjectStatus; label: string; hint: string }[] = [
@@ -33,7 +35,7 @@ interface Segment {
  */
 @Component({
   selector: 'app-projetos',
-  imports: [Glossario, LowerCasePipe],
+  imports: [Glossario, LowerCasePipe, SiteHeader, SiteFooter],
   templateUrl: './projetos.html',
   styleUrl: './projetos.scss',
 })
