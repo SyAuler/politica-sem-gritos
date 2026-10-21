@@ -9,6 +9,7 @@ import {
   TOPIC_GROUPS,
   TOPICS,
 } from './data';
+import { CASE_DEFENSES, CASE_OUTCOMES, CASE_RECORDS, CASE_RUMORS } from './processos';
 
 /**
  * Regras editoriais do site conferidas a cada mudança no conteúdo: tudo com fonte,
@@ -83,6 +84,9 @@ describe('Conteúdo do site', () => {
       ...INDICATORS.flatMap((i) => i.sources),
       ...FIRST_ROUND.sources,
       ...LAW_RECORDS.flatMap((r) => r.roles.flatMap((role) => role.sources)),
+      ...CASE_RECORDS.flatMap((r) => r.cases.flatMap((k) => k.timeline.flatMap((e) => e.sources))),
+      ...Object.values(CASE_RUMORS).flatMap((list) => list.flatMap((r) => r.sources)),
+      ...Object.values(CASE_DEFENSES).flatMap((d) => d.sources),
     ];
     for (const s of all) {
       expect(s.url)
@@ -117,6 +121,29 @@ describe('Conteúdo do site', () => {
             .toContain(ex.how);
         }
       }
+    }
+  });
+  it('dá a cada caso de processo uma decisão datada, com fonte, e um desfecho explicado', () => {
+    expect(CASE_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const outcomes = CASE_OUTCOMES.map((o) => o.key);
+    for (const r of CASE_RECORDS) {
+      for (const k of r.cases) {
+        const where = `${r.id} / ${k.id}`;
+        expect(outcomes).withContext(where).toContain(k.outcome);
+        expect(k.timeline.length).withContext(where).toBeGreaterThan(0);
+        expect(k.meaning.length).withContext(where).toBeGreaterThan(20);
+        for (const e of k.timeline) {
+          expect(e.sources.length).withContext(`${where} ${e.date}`).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it('mostra o mesmo número de boatos checados e a posição de cada um, com fonte', () => {
+    const [a, b] = ids.map((id) => CASE_RUMORS[id].length);
+    expect(a).toBe(b);
+    for (const id of ids) {
+      expect(CASE_DEFENSES[id].sources.length).withContext(id).toBeGreaterThan(0);
     }
   });
 });

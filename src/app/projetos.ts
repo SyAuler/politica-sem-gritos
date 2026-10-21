@@ -3,7 +3,7 @@ import { LowerCasePipe } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { CANDIDATES, LAW_ROLES } from './data';
 import { ProjectFile, ProjectItem, ProjectStatus } from './models';
-import { GlossarioPapeis } from './glossario';
+import { Glossario } from './glossario';
 
 /** Os quatro grupos de situação, na ordem em que aparecem no gráfico e na legenda. */
 const STATUS: { key: ProjectStatus; label: string; hint: string }[] = [
@@ -33,7 +33,7 @@ interface Segment {
  */
 @Component({
   selector: 'app-projetos',
-  imports: [GlossarioPapeis, LowerCasePipe],
+  imports: [Glossario, LowerCasePipe],
   templateUrl: './projetos.html',
   styleUrl: './projetos.scss',
 })
@@ -42,6 +42,7 @@ export class Projetos {
   readonly id = input.required<string>();
 
   protected readonly statuses = STATUS;
+  protected readonly lawRoles = LAW_ROLES;
   protected readonly candidate = computed(() => CANDIDATES.find((c) => c.id === this.id()));
   protected readonly data = signal<ProjectFile | null>(null);
   protected readonly failed = signal(false);

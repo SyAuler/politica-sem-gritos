@@ -693,7 +693,7 @@ export const SITE = {
 export const LIMITATIONS = [
   'As propostas foram resumidas dos planos de governo registrados no TSE, com a página de cada item. Resumir sempre simplifica: na dúvida, leia o trecho no PDF oficial.',
   'Só entra o que está no plano registrado. Promessas feitas em debates, entrevistas e redes sociais não aparecem aqui.',
-  'Histórico judicial e controvérsias de cada candidato ainda não entraram: exigem fontes primárias (decisões judiciais) conferidas uma a uma.',
+  'Os processos foram conferidos em reportagens e agências de notícias, com o link de cada decisão: os sistemas do STF, do STJ e do TJ-RJ não puderam ser consultados diretamente. Os casos de 2026 ainda estão em andamento e podem mudar.',
   'O histórico de leis do Flávio no Senado foi contado pelo site nos dados abertos do Senado (out/2026). Os números da Alerj, da Constituinte e dos governos Lula vêm de levantamentos da imprensa, com o link de cada um.',
   'A trajetória dos candidatos vem de biografias públicas (Wikipédia) e ainda não foi conferida, item por item, em fonte oficial.',
   'Os 27 senadores que continuam no mandato vêm de levantamentos da imprensa; os eleitos em 2026 foram conferidos no TSE.',

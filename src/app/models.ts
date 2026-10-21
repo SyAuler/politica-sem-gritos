@@ -177,3 +177,47 @@ export interface ProjectFile {
   avisos: string[];
   itens: ProjectItem[];
 }
+
+/**
+ * Como um caso terminou (ou está). Cada desfecho tem um significado jurídico diferente:
+ * anulado não é absolvido, e arquivado não é inocentado. O glossário do site explica.
+ */
+export type CaseOutcome =
+  | 'condenado'
+  | 'anulado'
+  | 'absolvido'
+  | 'rejeitado'
+  | 'arquivado'
+  | 'andamento'
+  | 'sem-acusacao';
+
+/** Uma decisão ou fato marcante do caso, com a data e quem decidiu. */
+export interface CaseEvent {
+  date: string;
+  /** Quem decidiu ou agiu: vara, tribunal, MP, PF, CPI... */
+  body: string;
+  text: string;
+  sources: SourceReference[];
+}
+
+export interface LegalCase {
+  id: string;
+  title: string;
+  period: string;
+  /** 'pessoal': o candidato foi alvo; 'entorno': governo, gabinete ou família, sem acusação a ele. */
+  group: 'pessoal' | 'entorno';
+  allegation: string;
+  /** Papel do candidato, em palavras simples ("réu", "não foi denunciado"...). */
+  role: string;
+  outcome: CaseOutcome;
+  /** O desfecho por extenso, com o motivo (ex.: "anulado: juiz sem competência para julgar"). */
+  outcomeText: string;
+  timeline: CaseEvent[];
+  /** Análise: o que o desfecho significa e o que não significa. */
+  meaning: string;
+}
+
+export interface CaseRecord {
+  id: CandidateId;
+  cases: LegalCase[];
+}

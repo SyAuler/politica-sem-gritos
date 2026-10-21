@@ -158,7 +158,12 @@
         </div>
       </section>
 
-      <app-glossario-papeis class="glossary" />
+      <app-glossario
+        class="glossary"
+        titulo="Autor, coautor, relator: qual a diferença?"
+        intro="Cada lei traz uma etiqueta com o papel que o candidato teve nela. Ser autor não é o mesmo que assinar junto ou relatar o projeto de outra pessoa."
+        [itens]="lawRoles"
+      />
 
       @if (data()!.avisos.length) {
         <aside class="avisos">

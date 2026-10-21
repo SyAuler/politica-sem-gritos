@@ -41,6 +41,25 @@ apague-o daqui e tire o aviso correspondente do site.
   novo, o script segue sem as relatorias e põe um aviso na página. Conferir o total (155) a cada
   atualização.
 
+## Processos e investigações (`src/app/processos.ts`)
+
+- **Conferir nos sistemas dos tribunais:** as decisões foram conferidas em reportagens (Agência
+  Brasil, Poder360, Conjur e outras). Vale confirmar na consulta processual do STF a Rcl 41.910 e o
+  INQ 5026, e no TSE a AIJE 0603123-40.2026.6.00.0000.
+- **Casos em andamento, para acompanhar:** Dark Horse / Banco Master (PF pediu mais 90 dias em
+  15/10/2026), caso Willer Tomaz (não está confirmado se virou inquérito formal), empréstimo do BRB
+  (não está confirmado se Flávio é investigado na frente aberta pela PF em out/2026) e os
+  inquéritos sobre Lulinha (PF pediu mais prazo em 02/10/2026).
+- **Desfechos não localizados:** inquérito da Portugal Telecom ligado ao mensalão (reaberto em
+  2017), apuração do MPDFT sobre o empréstimo do BRB (2021), apuração reaberta em 2020 sobre o
+  suposto vazamento da Operação Furna da Onça e resposta da PGR aos pedidos de investigação de
+  Flávio por atuação nos EUA (2026). Esses dois últimos ficaram fora do site até ter desfecho.
+- **Procedimentos menores do Lula** citados só pela defesa ou pelo Conjur (palestras, Lei de
+  Segurança Nacional, Carta Capital, ocupação do triplex): ficaram de fora até haver fonte primária.
+- **Justiça Eleitoral:** as disputas da campanha de 2026 (multa ao Flávio por impulsionar
+  propaganda negativa, AIJE contra a chapa dele) ficaram de fora por não tratarem de corrupção. Se
+  entrarem, pesquisar também as representações contra a campanha do Lula, para manter a simetria.
+
 ## Fontes que bloqueiam acesso automático
 
 - **Planalto (planalto.gov.br):** recusa conexões automáticas. Os links de leis apontam para a
@@ -52,7 +71,5 @@ apague-o daqui e tire o aviso correspondente do site.
 
 - **Menu do topo:** a seção "O que cada um já conseguiu aprovar" ainda não tem item no menu. No
   celular só cabem cinco; a ideia é criar um item "Histórico" quando entrarem os próximos blocos.
-- **Bloco 2 — escândalos e processos:** com a decisão judicial como fonte e o desfecho de cada caso
-  (condenado, anulado, arquivado, em andamento).
 - **Bloco 3 — gastos de dinheiro público de cada candidato.**
 - **Bloco 4 — para onde vão os impostos e quanto custam Congresso, STF e os outros órgãos.**

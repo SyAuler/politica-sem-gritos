@@ -188,7 +188,7 @@
 
   <section id="hoje">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 1 de 5</span> Ponto de partida</p>
+      <p class="section-kicker"><span>Parte 1 de 6</span> Ponto de partida</p>
       <h2 class="section-title">Como estamos hoje</h2>
       <p class="section-lead">Quatro números oficiais para situar a conversa.</p>
     </header>
@@ -214,7 +214,7 @@
 
   <section id="comparar">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 2 de 5</span> As propostas</p>
+      <p class="section-kicker"><span>Parte 2 de 6</span> As propostas</p>
       <h2 class="section-title">Compare por assunto</h2>
       <p class="section-lead">Escolha um tema. As duas colunas respondem às mesmas perguntas.</p>
     </header>
@@ -378,7 +378,7 @@
 
   <section id="congresso">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 3 de 5</span> O Congresso</p>
+      <p class="section-kicker"><span>Parte 3 de 6</span> O Congresso</p>
       <h2 class="section-title">Quem decide de verdade</h2>
       <p class="section-lead">
         Presidente propõe; Congresso aprova, muda ou barra. A Câmara e o Senado já foram eleitos: o
@@ -509,7 +509,7 @@
 
   <section id="leis">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 4 de 5</span> O histórico</p>
+      <p class="section-kicker"><span>Parte 4 de 6</span> O histórico</p>
       <h2 class="section-title">O que cada um já conseguiu aprovar</h2>
       <p class="section-lead">
         Projetos, emendas e medidas que viraram lei, cargo por cargo. Um já foi presidente e o outro
@@ -517,7 +517,12 @@
       </p>
     </header>
 
-    <app-glossario-papeis class="paper" />
+    <app-glossario
+      class="paper"
+      titulo="Autor, coautor, relator: qual a diferença?"
+      intro="Cada lei traz uma etiqueta com o papel que o candidato teve nela. Ser autor não é o mesmo que assinar junto ou relatar o projeto de outra pessoa."
+      [itens]="lawRoles"
+    />
 
     <div class="columns">
       @for (rec of lawRecords(); track rec.id) {
@@ -593,9 +598,122 @@
     </app-paper>
   </section>
 
+  <section id="processos">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 5 de 6</span> O histórico</p>
+      <h2 class="section-title">Processos e investigações</h2>
+      <p class="section-lead">
+        Cada caso com o que foi alegado, o papel do candidato, as decisões da Justiça com data e
+        fonte, e como está hoje. Investigação não é condenação, e anulação não é absolvição.
+      </p>
+    </header>
+
+    <app-glossario
+      class="paper"
+      titulo="Condenado, anulado, absolvido, arquivado: qual a diferença?"
+      intro="Cada caso traz uma etiqueta com o desfecho. Eles têm significados jurídicos diferentes, e confundir um com o outro é a forma mais comum de desinformação sobre processos."
+      [itens]="caseOutcomes"
+    />
+
+    <div class="columns">
+      @for (rec of caseRecords(); track rec.candidate.id) {
+        <div class="case-col">
+          <header class="law-head">
+            <img [src]="rec.candidate.photo.src" alt="" width="56" height="56" />
+            <div>
+              <h3>{{ rec.candidate.name }}</h3>
+              <p>
+                {{ rec.total }} {{ rec.total === 1 ? 'caso' : 'casos' }} em que foi alvo:
+                @for (t of rec.tally; track t.key; let last = $last) {
+                  <strong>{{ t.n }} {{ t.label }}</strong
+                  >{{ last ? '.' : ' · ' }}
+                }
+              </p>
+            </div>
+          </header>
+
+          <div class="case-defense">
+            <p><strong>O que ele diz.</strong> {{ rec.defense.text }}</p>
+            <app-source-links [sources]="rec.defense.sources" />
+          </div>
+
+          @for (g of rec.groups; track g.key) {
+            @if (g.cases.length) {
+              <app-paper class="paper case-group" variant="liso" [faixa]="true">
+                <h4 class="case-group-title">
+                  {{ g.label }} <small>({{ g.cases.length }})</small>
+                </h4>
+                @for (k of g.cases; track k.id) {
+                  <details class="case">
+                    <summary>
+                      <span class="case-head">
+                        <span class="case-outcome" [class]="'case-outcome o-' + k.outcome">{{
+                          outcomeLabel(k.outcome)
+                        }}</span>
+                        <span class="case-name">
+                          <strong>{{ k.title }}</strong> <small>{{ k.period }}</small>
+                        </span>
+                      </span>
+                      <span class="case-icon" aria-hidden="true"></span>
+                    </summary>
+                    <div class="case-body">
+                      <span class="tag fato">Fato</span>
+                      <p><strong>O que foi alegado.</strong> {{ k.allegation }}</p>
+                      <p><strong>Papel dele.</strong> {{ k.role }}</p>
+                      <p><strong>Como está.</strong> {{ k.outcomeText }}</p>
+                      <ol class="case-timeline">
+                        @for (e of k.timeline; track e.date + e.text) {
+                          <li>
+                            <span class="case-date">{{ e.date }}</span>
+                            <div>
+                              <p>
+                                <strong>{{ e.body }}.</strong> {{ e.text }}
+                              </p>
+                              <app-source-links [sources]="e.sources" />
+                            </div>
+                          </li>
+                        }
+                      </ol>
+                      <p class="case-meaning">
+                        <span class="tag analise">Análise</span> {{ k.meaning }}
+                      </p>
+                    </div>
+                  </details>
+                }
+              </app-paper>
+            }
+          }
+
+          <app-paper class="paper case-rumors" variant="liso">
+            <h4 class="case-group-title">Boatos desmentidos</h4>
+            <p class="note">Circularam nas redes e foram checados por agências de verificação.</p>
+            <ul>
+              @for (r of rec.rumors; track r.text) {
+                <li>
+                  <p class="rumor-text">{{ r.text }}</p>
+                  <p>{{ r.verdict }}</p>
+                  <app-source-links [sources]="r.sources" />
+                </li>
+              }
+            </ul>
+          </app-paper>
+        </div>
+      }
+    </div>
+
+    <app-paper class="paper reading" variant="jornal" rotulo="Análise" [tilt]="0.4">
+      <h3>Como ler esta parte sem tirar conclusão errada</h3>
+      <ul class="law-reading">
+        @for (r of caseReading; track r) {
+          <li>{{ r }}</li>
+        }
+      </ul>
+    </app-paper>
+  </section>
+
   <section id="historico">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 5 de 5</span> A série histórica</p>
+      <p class="section-kicker"><span>Parte 6 de 6</span> A série histórica</p>
       <h2 class="section-title">O que os dados mostram</h2>
       <p class="section-lead">
         Séries oficiais do IBGE e do Banco Central, ano a ano. Os governos aparecem só como legenda

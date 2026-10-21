@@ -40,7 +40,16 @@ import {
 import { PaperStack, TearSide, shuffledPostitColors, shuffledTearSides } from './paper-stack';
 import { SourceLinks } from './source-links';
 import { Divida } from './divida';
-import { GlossarioPapeis } from './glossario';
+import { Glossario } from './glossario';
+import { HISTORICO_AT } from './fontes';
+import {
+  CASE_DEFENSES,
+  CASE_GROUPS,
+  CASE_OUTCOMES,
+  CASE_READING,
+  CASE_RECORDS,
+  CASE_RUMORS,
+} from './processos';
 
 type Role = 'base' | 'independente' | 'oposicao' | 'pendente';
 
@@ -55,7 +64,7 @@ interface BlocView {
 @Component({
   selector: 'app-inicio',
   host: { '(window:scroll)': 'onScroll()' },
-  imports: [SourceLinks, PaperStack, Divida, GlossarioPapeis],
+  imports: [SourceLinks, PaperStack, Divida, Glossario],
   templateUrl: './inicio.html',
   styleUrl: './inicio.scss',
 })
@@ -99,7 +108,12 @@ export class Inicio {
   protected readonly limitations = LIMITATIONS;
   protected readonly updates = UPDATES;
   protected readonly site = SITE;
-  protected readonly updatedAt = UPDATED_AT.split('-').reverse().join('/');
+  protected readonly updatedAt = [UPDATED_AT, HISTORICO_AT]
+    .sort()
+    .at(-1)!
+    .split('-')
+    .reverse()
+    .join('/');
 
   protected readonly slides = [
     {
@@ -213,6 +227,31 @@ export class Inicio {
     this.candidates().map((c) => ({ ...LAW_RECORDS.find((r) => r.id === c.id)!, candidate: c })),
   );
   protected readonly lawReading = LAW_READING;
+  protected readonly lawRoles = LAW_ROLES;
+
+  // ---------- processos e investigações ----------
+  protected readonly caseOutcomes = CASE_OUTCOMES;
+  protected readonly caseReading = CASE_READING;
+  /** Casos de cada candidato, na ordem das colunas, separados em grupos e com a contagem por desfecho. */
+  protected readonly caseRecords = computed(() =>
+    this.candidates().map((c) => {
+      const cases = CASE_RECORDS.find((r) => r.id === c.id)!.cases;
+      const own = cases.filter((k) => k.group === 'pessoal');
+      return {
+        candidate: c,
+        rumors: CASE_RUMORS[c.id],
+        defense: CASE_DEFENSES[c.id],
+        groups: CASE_GROUPS.map((g) => ({ ...g, cases: cases.filter((k) => k.group === g.key) })),
+        tally: CASE_OUTCOMES.map((o) => {
+          const n = own.filter((k) => k.outcome === o.key).length;
+          return { key: o.key, n, label: o.count[n === 1 ? 0 : 1] };
+        }).filter((o) => o.n > 0),
+        total: own.length,
+      };
+    }),
+  );
+  protected readonly outcomeLabel = (key: string) =>
+    CASE_OUTCOMES.find((o) => o.key === key)?.label ?? key;
   protected readonly lawRoleText = (label: string) =>
     LAW_ROLES.find((r) => r.label === label)?.text ?? '';
   protected readonly hasExecutive = (roles: RecordRole[]) =>
