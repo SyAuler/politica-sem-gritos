@@ -1,4 +1,4 @@
-import { Candidate, Chamber, DebtFactorYear, Indicator, Scenario } from './models';
+import { Candidate, Chamber, DebtFactorYear, Indicator, LawRecord, Scenario } from './models';
 import { S, UPDATED_AT, src } from './fontes';
 
 export { UPDATED_AT } from './fontes';
@@ -422,6 +422,223 @@ export const DEBT_CONTEXT: Record<number, string> = {
   2025: 'Com a Selic a 15% no fim do ano, os juros foram o maior peso, o maior desde 2015.',
 };
 
+/**
+ * O que cada um já conseguiu aprovar, por cargo. Mesmo número de exemplos para os
+ * dois; os números de cada cargo dizem o recorte (período e o que foi contado).
+ */
+export const LAW_RECORDS: LawRecord[] = [
+  {
+    id: 'lula',
+    summary:
+      'Foi deputado federal por um mandato, o da Constituinte, e é presidente pela terceira vez. Como presidente, ele não aprova lei: manda projetos e medidas provisórias, e o Congresso decide.',
+    roles: [
+      {
+        role: 'Deputado federal por SP',
+        period: '1987–1991',
+        kind: 'parlamentar',
+        stats: [
+          { value: '41', label: 'emendas apresentadas na Assembleia Constituinte' },
+          { value: '7', label: 'emendas aprovadas, em diferentes etapas' },
+          {
+            value: '0 de 6',
+            label:
+              'projetos de lei de 1988 e 1989 (FGTS, Previdência, perdas salariais e mutuários) viraram lei',
+          },
+        ],
+        examples: [
+          {
+            title: 'Juizados especiais obrigatórios',
+            detail: 'Emenda incorporada ao art. 98 da Constituição, aprovada com 78 votos.',
+            how: 'Emenda dele',
+          },
+          {
+            title: 'Salário que não pode ser reduzido',
+            detail:
+              'Emenda sobre a irredutibilidade do salário, incorporada ao art. 7º, aprovada com 66 votos.',
+            how: 'Emenda dele',
+          },
+        ],
+        note: 'A emenda da jornada de 40 horas foi rejeitada por 217 a 165. A Constituição saiu com 44 horas semanais.',
+        sources: [S.cfLulaFlavioCongresso, S.camaraLulaDeputado],
+      },
+      {
+        role: 'Presidente, 1º e 2º mandatos',
+        period: '2003–2010',
+        kind: 'executivo',
+        stats: [
+          { value: '32', label: 'projetos de lei do governo viraram norma em 2003 e 2004' },
+          {
+            value: '90,8%',
+            label: 'das medidas provisórias aprovadas pelo Congresso nos três primeiros anos',
+          },
+        ],
+        examples: [
+          {
+            title: 'Bolsa Família (Lei 10.836/2004)',
+            detail: 'Criado pela Medida Provisória 132/2003, que o Congresso transformou em lei.',
+            how: 'Enviado pelo governo',
+          },
+          {
+            title: 'Lei Maria da Penha (Lei 11.340/2006)',
+            detail: 'Contra a violência doméstica; nasceu do PL 4.559/2004, enviado pelo governo.',
+            how: 'Enviado pelo governo',
+          },
+        ],
+        sources: [
+          S.aosFatosPlsExecutivo,
+          S.poder360Mps,
+          S.camaraBolsaFamilia,
+          S.camaraMariaDaPenha,
+        ],
+      },
+      {
+        role: 'Presidente, 3º mandato',
+        period: '2023–hoje',
+        kind: 'executivo',
+        stats: [
+          { value: '22 de 59', label: 'projetos de lei do governo viraram norma em 2023 e 2024' },
+          {
+            value: '37 de 179',
+            label: 'medidas provisórias viraram lei até dez/2025 (21%); 102 perderam a validade',
+          },
+        ],
+        examples: [
+          {
+            title: 'Arcabouço fiscal (Lei Complementar 200/2023)',
+            detail: 'Regra que limita o crescimento dos gastos do governo; nasceu do PLP 93/2023.',
+            how: 'Enviado pelo governo',
+          },
+          {
+            title: 'IR zerado até R$ 5 mil (Lei 15.270/2025)',
+            detail:
+              'Isenção para quem ganha até R$ 5 mil por mês e imposto mínimo para altas rendas; nasceu do PL 1.087/2025.',
+            how: 'Enviado pelo governo',
+          },
+        ],
+        note: 'A taxa de medidas provisórias aprovadas é a menor desde 2003: o Congresso deixou a maioria perder a validade sem votar.',
+        sources: [S.aosFatosPlsExecutivo, S.poder360Mps, S.camaraArcabouco, S.camaraIr5mil],
+      },
+    ],
+  },
+  {
+    id: 'flavio',
+    summary:
+      'Foi deputado estadual no Rio por quatro mandatos e é senador desde 2019. Nunca ocupou cargo no Executivo, então o histórico dele é só de parlamentar.',
+    roles: [
+      {
+        role: 'Deputado estadual no RJ (Alerj)',
+        period: '2003–2019',
+        kind: 'parlamentar',
+        stats: [
+          { value: '208', label: 'propostas apresentadas na Assembleia do Rio' },
+          { value: '51', label: 'viraram lei estadual, cerca de 1 em cada 4' },
+        ],
+        examples: [
+          {
+            title: 'Renovação da carteira de motorista',
+            detail: 'Isenção de taxas estaduais para agentes de segurança renovarem a habilitação.',
+            how: 'Autor',
+          },
+          {
+            title: 'Multa para trote',
+            detail: 'Multa para quem passa trote aos serviços de emergência.',
+            how: 'Autor',
+          },
+          {
+            title: 'Reprovação no exame psicológico',
+            detail:
+              'Candidato de concurso passa a ter direito de saber por que foi reprovado no psicotécnico.',
+            how: 'Autor',
+          },
+        ],
+        note: 'Não avançaram, entre outras, uma PEC estadual sobre expulsão de militares do estado e o referendo sobre cotas raciais, proposto três vezes.',
+        sources: [S.folhaFlavioLeis],
+      },
+      {
+        role: 'Senador pelo RJ',
+        period: '2019–hoje',
+        kind: 'parlamentar',
+        stats: [
+          {
+            value: '66',
+            label: 'propostas como primeiro autor (53 projetos de lei, 4 PECs e 9 de outros tipos)',
+          },
+          {
+            value: '0',
+            label: 'viraram lei até out/2026; 2 passaram no Senado e esperam a Câmara',
+          },
+          { value: '106', label: 'propostas em que assina como coautor, 91 delas PECs' },
+        ],
+        examples: [
+          {
+            title: 'IPVA zero para carro com 20 anos ou mais (Emenda Constitucional 137/2025)',
+            detail: 'Veio da PEC 72/2023, do senador Cleitinho, que ele assinou junto.',
+            how: 'Coautor',
+          },
+          {
+            title: 'Microcrédito (Lei 15.364/2026)',
+            detail:
+              'Amplia o crédito para pequenos empreendedores; veio do PL 3.190/2023, do senador Esperidião Amin, e foi sancionado com vetos.',
+            how: 'Coautor',
+          },
+          {
+            title: 'Fim da saidinha de presos (Lei 14.843/2024)',
+            detail:
+              'Foi o relator no Senado. O presidente vetou parte da lei e o Congresso derrubou o veto.',
+            how: 'Relator',
+          },
+        ],
+        note: 'As contagens de autoria mudam conforme o levantamento (a assessoria dele fala em 62 como autor principal), porque cada um conta tipos diferentes de proposta. Os números acima são a contagem do site nos dados abertos do Senado.',
+        sources: [
+          S.senadoAutoriasFlavio,
+          S.senadoPerfilFlavio,
+          S.senadoPec72,
+          S.senadoPl3190,
+          S.camaraSaidinha,
+          S.folhaFlavioLeis,
+          S.cfLulaFlavioCongresso,
+        ],
+      },
+    ],
+  },
+];
+
+/**
+ * O que quer dizer cada papel que aparece nas leis (autor, coautor...), em linguagem
+ * simples. Todo `how` usado em LAW_RECORDS precisa estar aqui.
+ */
+export const LAW_ROLES: { label: string; text: string }[] = [
+  {
+    label: 'Autor',
+    text: 'Quem escreveu e apresentou o projeto. A ideia nasceu no gabinete dele.',
+  },
+  {
+    label: 'Coautor',
+    text: 'Assinou o projeto junto com o autor principal: apoiou a ideia desde o começo, mas não foi quem a escreveu. Uma PEC precisa da assinatura de pelo menos 1/3 dos senadores ou deputados, por isso costuma ter dezenas de coautores.',
+  },
+  {
+    label: 'Relator',
+    text: 'O parlamentar escolhido para analisar o projeto de outra pessoa. Ele estuda o texto, recomenda aprovar ou rejeitar e pode reescrever partes antes da votação.',
+  },
+  {
+    label: 'Enviado pelo governo',
+    text: 'O presidente e os ministérios escrevem a proposta e mandam ao Congresso, que pode mudar o texto e precisa aprovar. Inclui a medida provisória, que vale na hora, mas perde a validade se o Congresso não votar em até 120 dias.',
+  },
+  {
+    label: 'Emenda dele',
+    text: 'Proposta de mudança num texto que já estava em discussão. Aqui, sugestões de Lula para o texto da Constituição de 1988.',
+  },
+];
+
+/** Cuidados para comparar os dois históricos sem tirar conclusão errada. */
+export const LAW_READING = [
+  'Ninguém aprova lei sozinho. O presidente envia o projeto e o Congresso muda e vota; o parlamentar precisa convencer a maioria. “Aprovou” quer dizer “conseguiu juntar votos”.',
+  'Presidente tem mais ferramentas: só ele edita medida provisória, que vale na hora, e o governo controla verbas e cargos que ajudam a formar maioria. Comparar o número de leis de um presidente com o de um senador é comparar coisas diferentes.',
+  'Projeto de parlamentar costuma parar nas comissões. Dos 66 do Flávio no Senado, 36 ainda esperam a escolha de um relator. Isso é comum no Congresso, não exclusividade dele.',
+  'Quantidade não mede importância: uma lei que cria data comemorativa conta igual a uma reforma. Por isso aparecem exemplos, além dos números.',
+  'Relatar também é legislar: o relator reescreve o texto e negocia os votos, mesmo sem ser o autor.',
+];
+
 export const SNAPSHOT = {
   items: [
     {
@@ -477,6 +694,7 @@ export const LIMITATIONS = [
   'As propostas foram resumidas dos planos de governo registrados no TSE, com a página de cada item. Resumir sempre simplifica: na dúvida, leia o trecho no PDF oficial.',
   'Só entra o que está no plano registrado. Promessas feitas em debates, entrevistas e redes sociais não aparecem aqui.',
   'Histórico judicial e controvérsias de cada candidato ainda não entraram: exigem fontes primárias (decisões judiciais) conferidas uma a uma.',
+  'O histórico de leis do Flávio no Senado foi contado pelo site nos dados abertos do Senado (out/2026). Os números da Alerj, da Constituinte e dos governos Lula vêm de levantamentos da imprensa, com o link de cada um.',
   'A trajetória dos candidatos vem de biografias públicas (Wikipédia) e ainda não foi conferida, item por item, em fonte oficial.',
   'Os 27 senadores que continuam no mandato vêm de levantamentos da imprensa; os eleitos em 2026 foram conferidos no TSE.',
 ];

@@ -1,0 +1,274 @@
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/">Política sem <span>Gritos</span></a>
+    <a class="back" href="/#leis">← Voltar para a comparação</a>
+  </div>
+</header>
+
+<main>
+  @if (candidate(); as c) {
+    <header class="section-head proj-head">
+      <p class="section-kicker"><span>Lista completa</span> O histórico</p>
+      <div class="proj-title">
+        <img [src]="c.photo.src" alt="" width="72" height="72" />
+        <div>
+          <h1 class="section-title">Todos os projetos de {{ c.name }}</h1>
+          <p class="section-lead">
+            Cada proposta em que ele teve um papel, com a situação de hoje e o link para a ficha
+            oficial. Use os filtros para achar um tema ou ver só o que virou lei.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    @if (failed()) {
+      <p class="proj-msg">
+        Não foi possível carregar a lista agora. Tente recarregar a página em instantes.
+      </p>
+    } @else if (!data()) {
+      <p class="proj-msg" aria-live="polite">Carregando a lista de projetos…</p>
+    } @else {
+      <!-- resumo: quantas propostas em cada papel e, no gráfico, o que aconteceu com elas -->
+      <section class="summary" aria-labelledby="resumo-titulo">
+        <h2 id="resumo-titulo" class="sr-only">Resumo</h2>
+        <div class="tiles">
+          <div class="tile">
+            <p class="tile-value">{{ data()!.itens.length }}</p>
+            <p class="tile-label">propostas na lista</p>
+          </div>
+          @for (r of roles(); track r.label) {
+            <button type="button" class="tile tile-role" (click)="pickRole(r.label)">
+              <span class="tile-value">{{ r.count }}</span>
+              <span class="tile-label"
+                >como <span class="law-how">{{ r.label }}</span></span
+              >
+              <span class="tile-go">ver na lista →</span>
+            </button>
+          }
+        </div>
+
+        <div class="chart">
+          <h3>O que aconteceu com essas propostas</h3>
+          <p class="chart-sub">
+            Uma barra para cada cargo e papel. Clique num pedaço da barra para ver a lista.
+          </p>
+          <ul class="legend">
+            @for (s of statuses; track s.key) {
+              <li>
+                <span class="dot" [class]="'dot s-' + s.key" aria-hidden="true"></span>
+                <span
+                  ><strong>{{ s.label }}</strong> · {{ s.hint }}</span
+                >
+              </li>
+            }
+          </ul>
+
+          @for (g of groups(); track g.key) {
+            <div class="group">
+              <p class="group-label">
+                <strong>{{ g.label }}</strong> <span>{{ g.period }}</span>
+              </p>
+              @for (b of g.bars; track b.papel) {
+                <div class="bar-row">
+                  <p class="bar-label">
+                    <span>
+                      como <span class="law-how">{{ b.papel }}</span> · {{ b.total }}
+                      {{ b.total === 1 ? 'proposta' : 'propostas' }}
+                    </span>
+                    <strong class="bar-lei">
+                      {{ b.lei }} {{ b.lei === 1 ? 'virou lei' : 'viraram lei' }}
+                    </strong>
+                  </p>
+                  <div class="bar" (mouseleave)="hover.set(null)">
+                    @for (seg of b.segments; track seg.key) {
+                      @if (seg.count) {
+                        <button
+                          type="button"
+                          class="seg"
+                          [class]="'seg s-' + seg.key"
+                          [style.flex-grow]="seg.count"
+                          [attr.aria-label]="
+                            g.label +
+                            ', como ' +
+                            b.papel.toLowerCase() +
+                            ': ' +
+                            seg.count +
+                            ' ' +
+                            seg.label.toLowerCase() +
+                            ' (' +
+                            pct(seg.count, b.total) +
+                            '%). Clique para listar.'
+                          "
+                          (mouseenter)="hover.set({ bar: g.key + b.papel, seg })"
+                          (focus)="hover.set({ bar: g.key + b.papel, seg })"
+                          (blur)="hover.set(null)"
+                          (click)="pick(g.key, b.papel, seg.key)"
+                        >
+                          @if (pct(seg.count, b.total) >= 9) {
+                            <span>{{ seg.count }}</span>
+                          }
+                        </button>
+                      }
+                    }
+                  </div>
+                  <p class="bar-tip" aria-hidden="true">
+                    @if (hover()?.bar === g.key + b.papel) {
+                      <strong>{{ hover()!.seg.label }}:</strong>
+                      {{ hover()!.seg.count }} de {{ b.total }} ({{
+                        pct(hover()!.seg.count, b.total)
+                      }}%) · clique para ver a lista
+                    } @else {
+                      @for (seg of b.segments; track seg.key; let last = $last) {
+                        {{ seg.label }} {{ seg.count }}{{ last ? '' : ' · ' }}
+                      }
+                    }
+                  </p>
+                </div>
+              }
+            </div>
+          }
+
+          <details class="table-view">
+            <summary>Ver os números em tabela</summary>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Cargo e papel</th>
+                  @for (s of statuses; track s.key) {
+                    <th scope="col">{{ s.label }}</th>
+                  }
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (g of groups(); track g.key) {
+                  @for (b of g.bars; track b.papel) {
+                    <tr>
+                      <th scope="row">{{ g.label }} ({{ g.period }}) · {{ b.papel }}</th>
+                      @for (seg of b.segments; track seg.key) {
+                        <td>{{ seg.count }}</td>
+                      }
+                      <td>{{ b.total }}</td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </details>
+        </div>
+      </section>
+
+      <app-glossario-papeis class="glossary" />
+
+      @if (data()!.avisos.length) {
+        <aside class="avisos">
+          <h2>O que esta lista não mostra</h2>
+          <ul>
+            @for (a of data()!.avisos; track a) {
+              <li>{{ a }}</li>
+            }
+          </ul>
+        </aside>
+      }
+
+      <!-- lista com busca -->
+      <section id="lista" class="list" aria-labelledby="lista-titulo">
+        <h2 id="lista-titulo">Lista de projetos</h2>
+        <div class="list-controls">
+          <label class="search">
+            <span>Buscar</span>
+            <input
+              type="search"
+              placeholder="Ex.: saúde, armas, PL 3071"
+              [value]="query()"
+              (input)="setFilter($event, 'query')"
+            />
+          </label>
+          <label>
+            <span>Cargo</span>
+            <select [value]="cargo()" (change)="setFilter($event, 'cargo')">
+              <option value="">Todos</option>
+              @for (c of data()!.cargos; track c.key) {
+                <option [value]="c.key">{{ c.label }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Papel</span>
+            <select [value]="papel()" (change)="setFilter($event, 'papel')">
+              <option value="">Todos</option>
+              @for (r of roles(); track r.label) {
+                <option [value]="r.label">{{ r.label }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Situação</span>
+            <select [value]="status()" (change)="setFilter($event, 'status')">
+              <option value="">Todas</option>
+              @for (s of statuses; track s.key) {
+                <option [value]="s.key">{{ s.label }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <p class="list-count" aria-live="polite">
+          {{ filtered().length }} {{ filtered().length === 1 ? 'projeto' : 'projetos' }}
+          @if (cargo() || papel() || status() || query()) {
+            <button type="button" class="link" (click)="clearFilters()">limpar filtros</button>
+          }
+        </p>
+
+        <ol class="items">
+          @for (i of visible(); track i.url + i.papel) {
+            <li class="item">
+              <p class="item-top">
+                <span class="law-how">{{ i.papel }}</span>
+                <strong>{{ i.tipo }} {{ i.numero }}/{{ i.ano }}</strong>
+                <span class="item-meta">{{ cargoLabel(i.cargo) }} · {{ date(i.data) }}</span>
+              </p>
+              <p class="item-text">{{ i.ementa }}</p>
+              <p class="item-bottom">
+                <span class="status">
+                  <span class="dot" [class]="'dot s-' + i.situacao" aria-hidden="true"></span>
+                  <strong>{{ statusLabel(i.situacao) }}</strong>
+                  @if (i.norma) {
+                    <span>· {{ i.norma }}</span>
+                  }
+                  @if (i.situacaoTexto) {
+                    <span class="official">({{ i.situacaoTexto | lowercase }})</span>
+                  }
+                </span>
+                <a [href]="i.url" target="_blank" rel="noopener"
+                  >Ficha oficial <span class="sr-only">(abre em nova aba)</span
+                  ><span aria-hidden="true">↗</span></a
+                >
+              </p>
+            </li>
+          } @empty {
+            <li class="note">Nenhum projeto encontrado com esses filtros.</li>
+          }
+        </ol>
+        @if (visible().length < filtered().length) {
+          <button type="button" class="more" (click)="more()">
+            Mostrar mais ({{ filtered().length - visible().length }} restantes)
+          </button>
+        }
+      </section>
+
+      <footer class="proj-foot">
+        <p>
+          Fontes:
+          @for (c of data()!.cargos; track c.key; let last = $last) {
+            <a [href]="c.fonteUrl" target="_blank" rel="noopener">{{ c.fonte }} ({{ c.label }})</a
+            >{{ last ? '.' : ';' }}
+          }
+          Lista montada pelo site a partir das bases oficiais em {{ date(data()!.geradoEm) }}. O
+          resumo de cada projeto é a ementa oficial.
+        </p>
+      </footer>
+    }
+  } @else {
+    <p class="proj-msg">Candidato não encontrado. <a href="/">Voltar ao início</a>.</p>
+  }
+</main>

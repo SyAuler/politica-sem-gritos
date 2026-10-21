@@ -3,6 +3,8 @@ import {
   CHAMBERS,
   FIRST_ROUND,
   INDICATORS,
+  LAW_RECORDS,
+  LAW_ROLES,
   SCENARIOS,
   TOPIC_GROUPS,
   TOPICS,
@@ -80,6 +82,7 @@ describe('Conteúdo do site', () => {
       ...CHAMBERS.flatMap((c) => c.sources),
       ...INDICATORS.flatMap((i) => i.sources),
       ...FIRST_ROUND.sources,
+      ...LAW_RECORDS.flatMap((r) => r.roles.flatMap((role) => role.sources)),
     ];
     for (const s of all) {
       expect(s.url)
@@ -97,5 +100,23 @@ describe('Conteúdo do site', () => {
 
   it('tem um cenário para cada candidato', () => {
     expect(SCENARIOS.map((s) => s.id).sort()).toEqual([...ids].sort());
+  });
+
+  it('mostra o histórico de leis dos dois com o mesmo número de exemplos', () => {
+    expect(LAW_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const [a, b] = LAW_RECORDS.map((r) => r.roles.flatMap((role) => role.examples).length);
+    expect(a).toBe(b);
+    for (const r of LAW_RECORDS) {
+      for (const role of r.roles) {
+        const where = `${r.id} / ${role.role}`;
+        expect(role.stats.length).withContext(where).toBeGreaterThan(0);
+        expect(role.sources.length).withContext(where).toBeGreaterThan(0);
+        for (const ex of role.examples) {
+          expect(LAW_ROLES.map((role) => role.label))
+            .withContext(`${where}: ${ex.title}`)
+            .toContain(ex.how);
+        }
+      }
+    }
   });
 });

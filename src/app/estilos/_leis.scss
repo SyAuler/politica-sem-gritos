@@ -1,0 +1,124 @@
+// "O que cada um já conseguiu aprovar": uma coluna por candidato, um card por cargo.
+
+@use 'etiqueta';
+
+.law-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  min-width: 0;
+}
+
+.law-head {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+
+  img {
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--linha);
+  }
+
+  h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.35rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--tinta-suave);
+  }
+}
+
+// botão que abre a lista completa numa aba nova
+.law-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  background: var(--azul);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: #0f3863;
+  }
+}
+
+.law-role-title {
+  margin: 0.5rem 0 0.8rem;
+  color: var(--verde);
+  font-size: 1.05rem;
+
+  small {
+    margin-left: 0.3rem;
+    color: var(--tinta-suave);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+// números do cargo: valor grande e o recorte embaixo
+.law-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.8rem;
+  margin: 0 0 1rem;
+
+  div {
+    padding: 0.6rem 0.7rem;
+    border-left: 3px solid var(--amarelo);
+    background: #fbfaf6;
+  }
+
+  dt {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--azul);
+    line-height: 1.1;
+  }
+
+  dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.86rem;
+    color: var(--tinta-suave);
+  }
+}
+
+.law-examples {
+  margin: 0 0 0.6rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.7rem 0;
+    border-top: 1px dashed var(--linha);
+  }
+
+  span:last-child {
+    font-size: 0.92rem;
+  }
+}
+
+.law-role.empty p {
+  color: var(--tinta-suave);
+}
+
+.law-reading {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+
+  li + li {
+    margin-top: 0.5rem;
+  }
+}

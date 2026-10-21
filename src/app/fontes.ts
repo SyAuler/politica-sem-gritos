@@ -142,4 +142,74 @@ export const S = {
     'Planalto',
     'https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp179.htm',
   ),
+  senadoAutoriasFlavio: src(
+    'Proposições com autoria do senador Flávio Bolsonaro (código 5894): situação de cada uma e norma gerada',
+    'Senado Federal / Dados Abertos',
+    'https://legis.senado.leg.br/dadosabertos/processo?codigoParlamentarAutor=5894',
+  ),
+  senadoPerfilFlavio: src(
+    'Senador Flávio Bolsonaro — perfil, autorias e relatorias',
+    'Senado Federal',
+    'https://www25.senado.leg.br/web/senadores/senador/-/perfil/5894',
+  ),
+  folhaFlavioLeis: src(
+    'Flávio Bolsonaro mirou segurança, mas não teve projetos próprios transformados em lei (Folha de S.Paulo, 30/05/2026)',
+    'Folhapress, republicado por Acessa.com',
+    'https://www.acessa.com/politica/2026/05/327883-flavio-bolsonaro-mirou-seguranca-mas-nao-teve-projetos-proprios-transformados-em-lei.html',
+  ),
+  cfLulaFlavioCongresso: src(
+    'O que Lula e Flávio fizeram no Congresso antes de disputar o Planalto (14/10/2026)',
+    'Congresso em Foco',
+    'https://www.congressoemfoco.com.br/noticia/123248/o-que-lula-e-flavio-fizeram-no-congresso-antes-de-disputar-o-planalto',
+  ),
+  aosFatosPlsExecutivo: src(
+    'Lula engana ao falar sobre relação com o Congresso (projetos do Executivo que viraram norma, por presidente; 06/02/2025)',
+    'Aos Fatos',
+    'https://www.aosfatos.org/noticias/lula-engana-frases-relacao-com-congresso/',
+  ),
+  poder360Mps: src(
+    'Lula tem menor taxa de aprovação de MPs desde 2003 (24/01/2026)',
+    'Poder360',
+    'https://www.poder360.com.br/poder-congresso/lula-tem-menor-taxa-de-aprovacao-de-mps-desde-2003/',
+  ),
+  camaraBolsaFamilia: src(
+    'MP 132/2003 (Poder Executivo) — cria o Bolsa Família; transformada na Lei 10.836/2004',
+    'Câmara dos Deputados',
+    'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=138604',
+  ),
+  camaraMariaDaPenha: src(
+    'PL 4.559/2004 (Poder Executivo) — violência doméstica; transformado na Lei 11.340/2006 (Maria da Penha)',
+    'Câmara dos Deputados',
+    'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=272058',
+  ),
+  camaraArcabouco: src(
+    'PLP 93/2023 (Poder Executivo) — regime fiscal sustentável; transformado na Lei Complementar 200/2023',
+    'Câmara dos Deputados',
+    'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2357053',
+  ),
+  camaraIr5mil: src(
+    'PL 1.087/2025 (Poder Executivo) — redução do IR até R$ 5 mil e tributação mínima de altas rendas; transformado na Lei 15.270/2025',
+    'Câmara dos Deputados',
+    'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2487436',
+  ),
+  camaraSaidinha: src(
+    'PL 2.253/2022 — fim da saída temporária de presos; transformado na Lei 14.843/2024 (relator no Senado: Flávio Bolsonaro)',
+    'Câmara dos Deputados',
+    'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=493361',
+  ),
+  senadoPec72: src(
+    'PEC 72/2023 (1º autor: Cleitinho; Flávio Bolsonaro entre os coautores) — IPVA de veículos com 20 anos ou mais; virou a Emenda Constitucional 137/2025',
+    'Senado Federal',
+    'https://www25.senado.leg.br/web/atividade/materias/-/materia/161820',
+  ),
+  senadoPl3190: src(
+    'PL 3.190/2023 (1º autor: Esperidião Amin; Flávio Bolsonaro entre os coautores) — microcrédito; virou a Lei 15.364/2026, com vetos',
+    'Senado Federal',
+    'https://www25.senado.leg.br/web/atividade/materias/-/materia/158350',
+  ),
+  camaraLulaDeputado: src(
+    'Proposições do deputado Luiz Inácio Lula da Silva (1987–1991), com a situação de cada uma',
+    'Câmara dos Deputados / Dados Abertos',
+    'https://dadosabertos.camara.leg.br/api/v2/proposicoes?idDeputadoAutor=139289&siglaTipo=PL',
+  ),
 };

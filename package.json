@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:dados": "ng test --watch=false --browsers=ChromeHeadless",
-    "test:worker": "node --test worker/trilha.test.mjs"
+    "test:worker": "node --test worker/trilha.test.mjs",
+    "dados:projetos": "node scripts/projetos.mjs"
   },
   "prettier": {
     "printWidth": 100,

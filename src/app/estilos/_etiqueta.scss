@@ -1,0 +1,14 @@
+// Etiqueta do papel do candidato numa lei. Usada na página principal, no glossário
+// e na lista de projetos.
+
+.law-how {
+  align-self: flex-start;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--azul);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--azul);
+}

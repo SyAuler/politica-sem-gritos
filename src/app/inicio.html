@@ -188,7 +188,7 @@
 
   <section id="hoje">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 1 de 4</span> Ponto de partida</p>
+      <p class="section-kicker"><span>Parte 1 de 5</span> Ponto de partida</p>
       <h2 class="section-title">Como estamos hoje</h2>
       <p class="section-lead">Quatro números oficiais para situar a conversa.</p>
     </header>
@@ -214,7 +214,7 @@
 
   <section id="comparar">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 2 de 4</span> As propostas</p>
+      <p class="section-kicker"><span>Parte 2 de 5</span> As propostas</p>
       <h2 class="section-title">Compare por assunto</h2>
       <p class="section-lead">Escolha um tema. As duas colunas respondem às mesmas perguntas.</p>
     </header>
@@ -378,7 +378,7 @@
 
   <section id="congresso">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 3 de 4</span> O Congresso</p>
+      <p class="section-kicker"><span>Parte 3 de 5</span> O Congresso</p>
       <h2 class="section-title">Quem decide de verdade</h2>
       <p class="section-lead">
         Presidente propõe; Congresso aprova, muda ou barra. A Câmara e o Senado já foram eleitos: o
@@ -507,9 +507,95 @@
     </div>
   </section>
 
+  <section id="leis">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 4 de 5</span> O histórico</p>
+      <h2 class="section-title">O que cada um já conseguiu aprovar</h2>
+      <p class="section-lead">
+        Projetos, emendas e medidas que viraram lei, cargo por cargo. Um já foi presidente e o outro
+        não: por isso cada cargo aparece separado, com o papel que o candidato teve em cada lei.
+      </p>
+    </header>
+
+    <app-glossario-papeis class="paper" />
+
+    <div class="columns">
+      @for (rec of lawRecords(); track rec.id) {
+        <div class="law-col">
+          <header class="law-head">
+            <img [src]="rec.candidate.photo.src" alt="" width="56" height="56" />
+            <div>
+              <h3>{{ rec.candidate.name }}</h3>
+              <p>{{ rec.summary }}</p>
+              <a
+                class="law-all"
+                [href]="'/candidato/' + rec.id + '/projetos'"
+                target="_blank"
+                rel="noopener"
+                >Ver todos os projetos de {{ rec.candidate.name }}
+                <span class="sr-only">(abre em nova aba)</span>
+                <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </header>
+
+          @for (role of rec.roles; track role.role) {
+            <app-paper class="paper law-role" variant="liso" [faixa]="true">
+              <span class="tag fato">Fato</span>
+              <h4 class="law-role-title">
+                {{ role.role }} <small>{{ role.period }}</small>
+              </h4>
+              <dl class="law-stats">
+                @for (st of role.stats; track st.label) {
+                  <div>
+                    <dt>{{ st.value }}</dt>
+                    <dd>{{ st.label }}</dd>
+                  </div>
+                }
+              </dl>
+              <ul class="law-examples">
+                @for (ex of role.examples; track ex.title) {
+                  <li>
+                    <span class="law-how" [attr.title]="lawRoleText(ex.how)">{{ ex.how }}</span>
+                    <strong>{{ ex.title }}</strong>
+                    <span>{{ ex.detail }}</span>
+                  </li>
+                }
+              </ul>
+              @if (role.note) {
+                <p class="note">{{ role.note }}</p>
+              }
+              <app-source-links [sources]="role.sources" />
+            </app-paper>
+          }
+
+          @if (!hasExecutive(rec.roles)) {
+            <app-paper class="paper law-role empty" variant="liso">
+              <span class="tag vazio">Não se aplica</span>
+              <h4 class="law-role-title">Cargo no Executivo</h4>
+              <p>
+                Nunca foi presidente, governador nem prefeito. Não há leis enviadas por um governo
+                dele para comparar.
+              </p>
+            </app-paper>
+          }
+        </div>
+      }
+    </div>
+
+    <app-paper class="paper reading" variant="jornal" rotulo="Análise" [tilt]="0.4">
+      <h3>Como comparar sem tirar conclusão errada</h3>
+      <ul class="law-reading">
+        @for (r of lawReading; track r) {
+          <li>{{ r }}</li>
+        }
+      </ul>
+    </app-paper>
+  </section>
+
   <section id="historico">
     <header class="section-head">
-      <p class="section-kicker"><span>Parte 4 de 4</span> A série histórica</p>
+      <p class="section-kicker"><span>Parte 5 de 5</span> A série histórica</p>
       <h2 class="section-title">O que os dados mostram</h2>
       <p class="section-lead">
         Séries oficiais do IBGE e do Banco Central, ano a ano. Os governos aparecem só como legenda
