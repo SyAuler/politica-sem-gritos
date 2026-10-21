@@ -201,24 +201,24 @@ export const SPEND_RECORDS: SpendRecord[] = [
         context: 'De jan/2023 a mai/2026. Cerca de 99% é sigiloso.',
         kind: 'cargo',
         detail:
-          'Gastos com o cartão de pagamento do governo no órgão Presidência da República, que inclui a estrutura que serve ao presidente (segurança, residências, viagens). Nos gastos sigilosos não se sabe quem recebeu nem o que foi comprado. Em valores de 2025 (corrigidos pelo IPCA), a média foi de R$ 25,2 milhões por ano em 2023–2025; nos governos anteriores com dados disponíveis, R$ 28,1 milhões.',
+          'Gastos com o cartão de pagamento do governo no órgão Presidência da República, que inclui a estrutura que serve ao presidente (segurança, residências, viagens). Nos gastos sigilosos não se sabe quem recebeu nem o que foi comprado. Em valores de 2025 (corrigidos pelo IPCA), a média foi de R$ 25,2 milhões por ano em 2023–2025; nos governos anteriores com dados disponíveis, R$ 26,4 milhões.',
         yearly: {
           mainLabel: 'Governo atual',
-          referenceLabel: 'Média dos governos anteriores com dados (2013–2014 e 2019–2022)',
+          referenceLabel: 'Média dos governos anteriores com dados (2013–2016 e 2019–2022)',
           unit: 'em R$ de 2025, corrigidos pelo IPCA',
           rows: [
-            { year: '2023', main: 25_880_000, reference: 28_060_000 },
-            { year: '2024', main: 27_150_000, reference: 28_060_000 },
-            { year: '2025', main: 22_570_000, reference: 28_060_000 },
+            { year: '2023', main: 25_880_000, reference: 26_350_000 },
+            { year: '2024', main: 27_150_000, reference: 26_350_000 },
+            { year: '2025', main: 22_570_000, reference: 26_350_000 },
           ],
         },
         notes: [
           {
-            text: 'A média dos governos anteriores usa os anos que o site conseguiu baixar do Portal da Transparência: 2013 e 2014 (Dilma, R$ 35,2 milhões por ano) e 2019 a 2022 (Bolsonaro, R$ 24,5 milhões por ano). Os anos de 2015 a 2018 ficaram de fora porque o Portal passou a pedir verificação humana.',
+            text: 'A média dos governos anteriores usa os anos que o site conseguiu baixar do Portal da Transparência: 2013 a 2016 (Dilma e, em 2016, Temer: R$ 28,2 milhões por ano) e 2019 a 2022 (Bolsonaro, R$ 24,5 milhões por ano). Faltam 2017 e 2018, porque o Portal passou a pedir verificação humana no meio do download.',
             sources: [CPGF, IPCA],
           },
           {
-            text: 'Sobre o sigilo: o TCU apontou 99,6% de gastos sigilosos de jan/2023 a abr/2025 e citou de 64% a 79% nos governos Dilma e Temer. Nos arquivos do Portal, porém, a parte marcada como sigilosa já passava de 97% em 2013 e 2014. O site não conseguiu conciliar os dois critérios.',
+            text: 'Sobre o sigilo: o TCU apontou 99,6% de gastos sigilosos de jan/2023 a abr/2025 e citou de 64% a 79% nos governos Dilma e Temer. Nos arquivos do Portal, porém, a parte marcada como sigilosa já passava de 97% em todos os anos de 2013 a 2016. O site não conseguiu conciliar os dois critérios.',
             sources: [TCU_SIGILO, CPGF],
           },
         ],

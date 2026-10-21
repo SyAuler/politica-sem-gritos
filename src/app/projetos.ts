@@ -1,11 +1,11 @@
-import { Component, afterNextRender, computed, inject, input, signal } from '@angular/core';
+import { Component, OnInit, afterNextRender, computed, inject, input, signal } from '@angular/core';
 import { LowerCasePipe } from '@angular/common';
-import { Title } from '@angular/platform-browser';
 import { CANDIDATES, LAW_ROLES } from './data';
 import { ProjectFile, ProjectItem, ProjectStatus } from './models';
 import { Glossario } from './glossario';
 import { SiteHeader } from './site-header';
 import { SiteFooter } from './site-footer';
+import { injectPageMeta } from './seo';
 
 /** Os quatro grupos de situação, na ordem em que aparecem no gráfico e na legenda. */
 const STATUS: { key: ProjectStatus; label: string; hint: string }[] = [
@@ -39,7 +39,7 @@ interface Segment {
   templateUrl: './projetos.html',
   styleUrl: './projetos.scss',
 })
-export class Projetos {
+export class Projetos implements OnInit {
   /** Vem da rota (candidato/:id/projetos). */
   readonly id = input.required<string>();
 
@@ -105,12 +105,23 @@ export class Projetos {
   /** Barra e segmento sob o mouse ou o foco: alimenta a dica do gráfico. */
   protected readonly hover = signal<{ bar: string; seg: Segment } | null>(null);
 
+  private readonly setMeta = injectPageMeta();
+
+  /** Título e prévia de link da página de cada candidato (roda também na pré-renderização). */
+  ngOnInit(): void {
+    const c = this.candidate();
+    if (!c) return;
+    this.setMeta({
+      title: `Todos os projetos de ${c.name} — Política sem Gritos`,
+      description: `Todos os projetos de lei, emendas e medidas em que ${c.name} teve um papel, com a situação de cada um e o link para a ficha oficial na Câmara ou no Senado.`,
+      path: `/candidato/${c.id}/projetos/`,
+    });
+  }
+
   constructor() {
-    const title = inject(Title);
     afterNextRender(async () => {
       const c = this.candidate();
       if (!c) return;
-      title.setTitle(`Todos os projetos de ${c.name} — Política sem Gritos`);
       try {
         const res = await fetch(`/dados/projetos-${c.id}.json`);
         if (!res.ok) throw new Error(String(res.status));

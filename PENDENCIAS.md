@@ -65,12 +65,12 @@ apague-o daqui e tire o aviso correspondente do site.
 - **Portal da Transparência pede captcha:** ficaram sem dado o cartão corporativo da Presidência de
   jun a set/2026, o orçamento executado da Presidência (órgão 20000) e o arquivo de viagens. Tentar
   pelo navegador ou com uma chave da API (cadastro gratuito no Portal).
-- **Média do cartão corporativo da Presidência:** usa 2013, 2014 e 2019–2022. Faltam 2015–2018
-  (fim do governo Dilma e governo Temer): o Portal passou a pedir verificação humana no meio do
-  download. Baixar os meses que faltam em `download-de-dados/cpgf/AAAAMM` e recalcular (órgão
+- **Média do cartão corporativo da Presidência:** usa 2013–2016 e 2019–2022. Faltam 2017 e 2018
+  (governo Temer): o Portal pede verificação humana depois de alguns downloads. Já baixados: até
+  mai/2017. Baixar os meses que faltam em `download-de-dados/cpgf/AAAAMM` e recalcular (órgão
   20101, corrigido pelo IPCA a valores de 2025). Os arquivos antes de 2013 não existem no Portal.
-- **Sigilo do cartão:** nos arquivos do Portal, a parte marcada como sigilosa passa de 97% desde
-  2013, mas o TCU cita de 64% a 79% nos governos Dilma e Temer. Entender o critério do TCU.
+- **Sigilo do cartão:** nos arquivos do Portal, a parte marcada como sigilosa passa de 97% em
+  todos os anos com dados (2013–2016 e 2019–2026), mas o TCU cita de 64% a 79% nos governos Dilma e Temer. Entender o critério do TCU.
 - **Viagens:** falta a divisão por ano dos R$ 150,5 milhões da Presidência (2023–2025) e o gasto
   do Itamaraty com viagens internacionais em 2024.
 - **Diferença no cartão corporativo:** a soma do site para 2023–2025 (R$ 74,1 milhões no órgão

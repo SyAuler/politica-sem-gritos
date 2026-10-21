@@ -263,7 +263,14 @@ export const TAX_CONCENTRATION = [
     title: 'Pessoal e aposentados nas instituições federais',
     text: 'Na Câmara, no Senado, no TCU e no Judiciário da União, mais de 80% do orçamento vai para pessoal. No Senado, 44% paga aposentados e pensionistas; na Câmara, 32%; no TCU, 34%.',
     counter:
-      'Parte desse custo é de regras de aposentadoria antigas, que valem para quem entrou no serviço público antes das reformas da Previdência.',
+      'Parte desse custo vem de regras antigas: quem entrou no serviço público até 2003 ainda pode se aposentar com o último salário e os mesmos reajustes de quem está na ativa, se cumprir as regras de transição das reformas de 2003 e 2019.',
+    sources: [
+      f(
+        'Emenda Constitucional 103/2019 (reforma da Previdência), arts. 4º e 20: regras de transição dos servidores',
+        'Planalto',
+        'https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc103.htm',
+      ),
+    ],
   },
 ];
 

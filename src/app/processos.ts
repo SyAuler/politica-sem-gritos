@@ -653,7 +653,7 @@ export const CASE_RECORDS: CaseRecord[] = [
           {
             date: '02/10/2026',
             body: 'Polícia Federal',
-            text: 'Pede mais prazo para concluir as análises dos inquéritos que citam Lulinha.',
+            text: 'Pede mais prazo para concluir as análises dos inquéritos que citam Lulinha. Até 21/10/2026, o pedido não tinha sido decidido.',
             sources: [
               f(
                 'PF pede mais prazo para concluir análises nos inquéritos que citam Lulinha',
@@ -809,12 +809,17 @@ export const CASE_RECORDS: CaseRecord[] = [
           {
             date: '15/10/2026',
             body: 'Polícia Federal',
-            text: 'Pede ao STF mais 90 dias para concluir a investigação.',
+            text: 'Pede ao STF mais 90 dias e entrega documentos que, segundo a PF, mostram uma “divergência contábil severa”: mais de US$ 12 milhões saíram do país e US$ 2,8 milhões voltaram. Até 21/10/2026, o pedido não tinha sido decidido.',
             sources: [
               f(
                 'Dark Horse: PF pede mais 90 dias para investigação sobre filme de Bolsonaro',
                 'Metrópoles',
                 'https://www.metropoles.com/colunas/manoela-alcantara/dark-horse-pf-pede-mais-90-dias-para-investigacao-sobre-filme-de-bolsonaro',
+              ),
+              f(
+                '“Dark Horse”: PF aponta divergência “severa” entre recursos enviados ao exterior',
+                'O Povo',
+                'https://opovo.com.br/noticias/brasil/2026/10/20/quotdark-horse-quot-pf-aponta-divergencia-quotsevera-quot-entre-recursos-enviados-ao-exterior.html',
               ),
             ],
           },

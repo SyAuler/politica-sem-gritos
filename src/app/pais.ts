@@ -6,6 +6,7 @@ import { SourceLinks } from './source-links';
 import { Divida } from './divida';
 import { SiteHeader } from './site-header';
 import { SiteFooter } from './site-footer';
+import { injectPageMeta } from './seo';
 import { ARRECADACAO, ORGAOS, POR_100_2025, SAIDA_GRUPOS } from './impostos-dados';
 import {
   JUDICIARY,
@@ -34,6 +35,15 @@ import {
 })
 export class Pais {
   protected readonly indicators = INDICATORS;
+
+  constructor() {
+    injectPageMeta()({
+      title: 'O país em números — Política sem Gritos',
+      description:
+        'Inflação, juros, desemprego, renda e dívida ano a ano desde 2003, e para onde vão os impostos: de cada R$ 100 gastos pelo governo federal, quanto vai para cada área e quanto custa cada instituição.',
+      path: '/o-pais-em-numeros/',
+    });
+  }
   /** Uma cor por bilhete, em ordem embaralhada a cada carregamento. */
   protected readonly postitColors = shuffledPostitColors();
 

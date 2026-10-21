@@ -684,6 +684,9 @@
             <h4>{{ c.title }}</h4>
             <p>{{ c.text }}</p>
             <p class="conc-counter"><strong>Contraponto.</strong> {{ c.counter }}</p>
+            @if (c.sources) {
+              <app-source-links [sources]="c.sources" />
+            }
           </div>
         }
       </div>
