@@ -87,15 +87,27 @@ apague-o daqui e tire o aviso correspondente do site.
 - **Campanha:** os valores são parciais (relatórios financeiros de 17 e 20/10/2026). Atualizar com
   a prestação de contas final, que vai até 14/11/2026.
 
+## Para onde vão os impostos (`src/app/impostos*.ts`, `scripts/orcamento/`)
+
+- **Atualizar:** rodar os scripts de `scripts/orcamento/funcoes` e `scripts/orcamento/orgaos` e
+  depois `gera_dados_site.py`, que regrava `src/app/impostos-dados.ts`. Os scripts recebem a pasta
+  de trabalho como argumento.
+- **Tesouro Transparente bloqueou downloads (HTTP 429):** a série de despesas pagas com restos a
+  pagar e o Resultado do Tesouro Nacional não foram usados. O site usa o valor liquidado (áreas) e
+  o pago no ano (órgãos), do SIOP.
+- **Refinanciamento:** o RREO separa R$ 13,8 bi a mais de rolagem em 2025 do que as subfunções do
+  SIOP. Entender o critério do Tesouro (provavelmente pela fonte de recursos).
+- **População de 2023:** o IBGE não publicou estimativa; o valor por habitante de 2023 usa uma
+  interpolação. 2022 em diante usa a base do Censo.
+- **Supersalários:** não há total oficial. Os números são estimativas de ONGs com metodologias
+  diferentes entre si. Acompanhar a auditoria CNJ/CNMP prevista na decisão do STF de mar/2026.
+- **Senado:** valor da verba de gabinete do senador não localizado.
+- **Menu do topo:** com as seções novas, vale reorganizar o menu (ex.: "Histórico" agrupando leis,
+  processos e gastos; "Impostos" à parte).
+
 ## Fontes que bloqueiam acesso automático
 
 - **Planalto (planalto.gov.br):** recusa conexões automáticas. Os links de leis apontam para a
   ficha de tramitação na Câmara ou no Senado. Se o Planalto liberar, dá para linkar o texto da lei.
 - **TSE (tse.jus.br):** devolve 403. Os planos de governo foram baixados à mão pelo
   DivulgaCandContas; os resultados oficiais vêm de `resultados.tse.jus.br`, que funciona.
-
-## Conteúdo ainda não feito
-
-- **Menu do topo:** a seção "O que cada um já conseguiu aprovar" ainda não tem item no menu. No
-  celular só cabem cinco; a ideia é criar um item "Histórico" quando entrarem os próximos blocos.
-- **Bloco 4 — para onde vão os impostos e quanto custam Congresso, STF e os outros órgãos.**

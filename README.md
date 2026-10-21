@@ -18,6 +18,12 @@ o material para decidir sozinha.
 - **O que cada um já conseguiu aprovar:** leis, emendas e medidas, cargo por cargo, com o papel que
   o candidato teve em cada uma. A lista completa de projetos fica numa página própria para cada
   candidato, com o link da ficha oficial na Câmara ou no Senado.
+- **Processos e investigações:** cada caso de cada candidato com a decisão da Justiça, data e
+  fonte, e o que o desfecho significa (anulado não é absolvido; arquivado não é inocentado).
+- **Quanto custam aos cofres públicos:** os custos do mandato atual de cada um, sem comparar
+  cargos diferentes, com a média do próprio cargo como referência.
+- **Para onde vão os impostos:** quanto o governo federal arrecada, em que gasta (de cada R$ 100)
+  e quanto custa cada instituição por habitante, com as contas refeitas a partir dos dados oficiais.
 - **A série histórica:** os dados de cada governo ano a ano, sem atribuir culpa nem mérito.
 
 ## Como o site tenta ser justo

@@ -1,6 +1,7 @@
 // "Ver os números em tabela": a tabela que acompanha cada gráfico, recolhida.
 
 .table-view {
+  overflow-x: auto;
   margin-top: 0.4rem;
   font-size: 0.9rem;
 
@@ -8,6 +9,20 @@
     cursor: pointer;
     color: var(--azul);
     font-weight: 600;
+  }
+
+  td,
+  th[scope='row'] {
+    white-space: nowrap;
+  }
+
+  caption {
+    caption-side: top;
+    padding: 0 0 0.4rem;
+    text-align: left;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--tinta-suave);
   }
 
   table {

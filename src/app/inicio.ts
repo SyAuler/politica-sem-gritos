@@ -15,6 +15,7 @@ import {
   CHAMBERS,
   EDITORIAL_RULES,
   FIRST_ROUND,
+  gov,
   INDICATORS,
   LAW_READING,
   LAW_RECORDS,
@@ -43,6 +44,21 @@ import { Divida } from './divida';
 import { Glossario } from './glossario';
 import { HISTORICO_AT } from './fontes';
 import { SPEND_READING, SPEND_RECORDS } from './gastos';
+import { ARRECADACAO, ORGAOS, POR_100_2025, SAIDA_GRUPOS } from './impostos-dados';
+import {
+  JUDICIARY,
+  TAX_CONCENTRATION,
+  ORG_NOTES,
+  ORG_SCOPE,
+  PARTY_FUNDS,
+  PER100_COLORS,
+  PER100_NOTES,
+  PER100_SHORT,
+  SUPERSALARIES,
+  TAX_HEADLINES,
+  TAX_READING,
+  TAX_SOURCES,
+} from './impostos';
 import {
   CASE_DEFENSES,
   CASE_GROUPS,
@@ -260,11 +276,142 @@ export class Inicio {
       return { ...r, candidate: c };
     }),
   );
+  // ---------- para onde vão os impostos ----------
+  protected readonly taxHeadlines = TAX_HEADLINES;
+  protected readonly taxSources = TAX_SOURCES;
+  protected readonly taxReading = TAX_READING;
+  protected readonly judiciary = JUDICIARY;
+  protected readonly taxConcentration = TAX_CONCENTRATION;
+  protected readonly judMax = Math.max(...JUDICIARY.branches.map((b) => b.value));
+  /** Linha da evolução do Judiciário: por habitante (padrão) ou total. */
+  protected readonly judMode = signal<'perCapita' | 'total'>('perCapita');
+  /** Desenho da linha num quadro 1000 × 260, com 3 linhas de grade e rótulos só nos pontos-chave. */
+  protected readonly judLine = computed(() => {
+    const mode = this.judMode();
+    const pts = JUDICIARY.series.map((r) => ({ year: r.year, value: r[mode] }));
+    const W = 1000,
+      H = 260,
+      left = 64,
+      right = 24,
+      top = 30,
+      bottom = 34;
+    const vals = pts.map((p) => p.value);
+    const step = mode === 'perCapita' ? 100 : 20;
+    const lo = Math.floor((Math.min(...vals) * 0.9) / step) * step;
+    const hi = Math.ceil((Math.max(...vals) * 1.05) / step) * step;
+    const x = (i: number) => left + (i / (pts.length - 1)) * (W - left - right);
+    const y = (v: number) => top + (1 - (v - lo) / (hi - lo)) * (H - top - bottom);
+    const fmt = (v: number) =>
+      mode === 'perCapita' ? `R$ ${Math.round(v)}` : `R$ ${v.toLocaleString('pt-BR')} bi`;
+    const min = Math.min(...vals);
+    const points = pts.map((p, i) => ({
+      ...p,
+      x: x(i),
+      y: y(p.value),
+      label: fmt(p.value),
+      // rótulo só no primeiro, no menor e no último ano
+      key: i === 0 || i === pts.length - 1 || p.value === min,
+    }));
+    const grid = [lo, (lo + hi) / 2, hi].map((v) => ({ y: y(v), label: fmt(v) }));
+    const path = points
+      .map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(' ');
+    return { W, H, left, right, points, grid, path, note: JUDICIARY.seriesNote[mode] };
+  });
+  protected readonly partyFunds = PARTY_FUNDS;
+  protected readonly supersalaries = SUPERSALARIES;
+  protected readonly orgNotes = ORG_NOTES;
+  protected readonly orgScope = ORG_SCOPE;
+  protected readonly orgs = ORGAOS;
+  /** Grupos do "de cada R$ 100", com cor e explicação, e os 100 quadradinhos na mesma ordem. */
+  protected readonly per100 = POR_100_2025.map((p) => ({
+    ...p,
+    color: PER100_COLORS[p.key],
+    note: PER100_NOTES[p.key],
+  }));
+  protected readonly per100Squares = this.per100.flatMap((p) =>
+    Array.from({ length: p.squares }, () => p),
+  );
+  /** Grupo realçado ao passar o mouse na legenda (os outros quadradinhos esmaecem). */
+  protected readonly per100Focus = signal<string | null>(null);
+
+  // ---------- entrada x saída, ano a ano ----------
+  /** Grupo da saída em destaque (clicado na legenda); null mostra entrada e saída completas. */
+  protected readonly ioFocus = signal<string | null>(null);
+  protected readonly ioGroups = this.per100.map((p) => ({
+    key: p.key,
+    color: p.color,
+    label: PER100_SHORT[p.key],
+  }));
+  protected toggleIo(key: string) {
+    this.ioFocus.update((k) => (k === key ? null : key));
+  }
+  /** Anos com entrada, saída por grupo e a escala; separados por governo para a faixa de legenda. */
+  protected readonly ioChart = computed(() => {
+    const focus = this.ioFocus();
+    const entrada = new Map(ARRECADACAO.map((r) => [r.year, r.real]));
+    const rows = SAIDA_GRUPOS.map((r) => {
+      const row = r as unknown as Record<string, number>;
+      return {
+        year: r.year,
+        entrada: entrada.get(r.year) ?? 0,
+        total: r.total,
+        focused: focus ? row[focus] : r.total,
+        segs: this.ioGroups.map((g) => ({ ...g, value: row[g.key] })),
+      };
+    });
+    // com um grupo em destaque, a escala passa a ser a do grupo, para a evolução dele aparecer
+    const max = focus
+      ? Math.max(...rows.map((r) => r.focused))
+      : Math.max(...rows.flatMap((r) => [r.total, r.entrada]));
+    const groups: { government: string; rows: typeof rows }[] = [];
+    for (const r of rows) {
+      const g = gov(r.year);
+      const last = groups[groups.length - 1];
+      if (last?.government === g) last.rows.push(r);
+      else groups.push({ government: g, rows: [r] });
+    }
+    return { groups, max, rows };
+  });
+  /** Frase acima do gráfico: como ler, ou o resumo do grupo em destaque. */
+  protected readonly ioNote = computed(() => {
+    const focus = this.ioFocus();
+    const rows = this.ioChart().rows;
+    if (!focus) {
+      return 'Barra escura: o que o governo federal arrecadou. Barra colorida: o que gastou, por área, sem a rolagem da dívida. Clique numa área da legenda para ver só a evolução dela.';
+    }
+    const first = rows[0];
+    const last = rows[rows.length - 1];
+    const label = this.ioGroups.find((g) => g.key === focus)!.label;
+    const pct = (last.focused / last.total) * 100;
+    return `${label}: R$ ${this.fmtBi(last.focused)} bilhões em 2025 (${pct.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}% do gasto total), contra R$ ${this.fmtBi(first.focused)} bilhões em 2003, em valores de 2025. Clique de novo para voltar.`;
+  });
+
+  /** Instituição aberta no painel de detalhes. */
+  protected readonly orgOpen = signal<string | null>(null);
+  protected readonly orgPanel = computed(() => this.orgs.find((o) => o.key === this.orgOpen()));
+  protected readonly orgMax = (rows: { real: number }[]) => Math.max(...rows.map((r) => r.real));
+  /** "1.101": bilhões sem casas decimais, para os rótulos das barras. */
+  protected readonly fmtBi = (v: number) => Math.round(v).toLocaleString('pt-BR');
+  /** Bilhões com a unidade: "489 bi", "1,69 tri" (o valor de entrada já está em bilhões). */
+  protected readonly fmtBiUnit = (v: number) =>
+    v >= 1000
+      ? `${(v / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tri`
+      : `${Math.round(v).toLocaleString('pt-BR')} bi`;
+  protected readonly fmtCents = (v: number) =>
+    v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  protected readonly fmtNum = (v: number) =>
+    v.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+  protected readonly fmtPct = (v: number) =>
+    `${v.toLocaleString('pt-BR', { maximumFractionDigits: v < 0.1 ? 3 : 2 })}%`;
+
   /** "R$ 23,7 mi", "R$ 180 mil": valores curtos para gráficos. */
   protected readonly money = (v: number) =>
-    v >= 1_000_000
-      ? `R$ ${(v / 1_000_000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`
-      : `R$ ${Math.round(v / 1000).toLocaleString('pt-BR')} mil`;
+    v >= 1_000_000_000
+      ? `R$ ${(v / 1_000_000_000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} bi`
+      : v >= 1_000_000
+        ? `R$ ${(v / 1_000_000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`
+        : `R$ ${Math.round(v / 1000).toLocaleString('pt-BR')} mil`;
   protected readonly pctOf = (part: number, total: number) => (total ? (part / total) * 100 : 0);
   /** Card de custo aberto em cada coluna (um por vez); o detalhe abre abaixo dos cards. */
   protected readonly spendOpen = signal<Record<string, number | null>>({});
