@@ -1,67 +1,57 @@
 # Política sem Gritos — leia, compare, decida
 
-Site que compara, lado a lado e com o mesmo tratamento, as propostas de Lula e Flávio
-Bolsonaro para o 2º turno de 2026. Cada proposta traz a página do plano de governo
-registrado no TSE. Não há nota para candidato nem recomendação de voto.
+Na eleição, quase tudo o que chega até as pessoas vem de quem já escolheu um lado: corte de vídeo,
+manchete alarmista, número sem fonte. Este site existe para fazer o contrário. Ele junta, num lugar
+só, os fatos sobre os dois candidatos do 2º turno de 2026, Lula e Flávio Bolsonaro, com a fonte de
+cada informação, e deixa a conclusão para quem lê.
 
-## Rodar e publicar
+O objetivo não é convencer ninguém. É dar a qualquer pessoa, sem precisar entender de política,
+o material para decidir sozinha.
 
-```bash
-npm install
-npm start            # desenvolvimento, em http://localhost:4200
-npm run build        # gera o site estático em dist/politica-sem-gritos/browser
-npm run test:dados   # confere as regras editoriais dos dados
-npm run test:worker  # confere o contador de visitas (worker/)
-```
+## O que o site mostra
 
-O `build` já gera o HTML pronto (pré-renderização), o que faz a prévia do link
-funcionar no WhatsApp e nas redes. A pasta `dist/politica-sem-gritos/browser` pode ir para
-qualquer hospedagem de site estático (Netlify, Vercel, Cloudflare Pages, GitHub Pages).
+**Na página principal, a comparação entre os dois candidatos:**
 
-O site no ar, em politicasemgrito.com.br, sai pela Cloudflare: o `wrangler.jsonc` diz qual pasta
-publicar e liga o domínio e o www. Com o repositório conectado na Cloudflare (Workers Builds),
-cada mudança que entra na `main` publica sozinha em cerca de um minuto, com build `npm run build`
-e deploy `npx wrangler deploy`.
+- **Como o país está hoje:** inflação, juros, desemprego e renda, em números oficiais.
+- **As propostas lado a lado:** 14 temas, cada proposta com a página do plano de governo registrado
+  no TSE, o que cada plano deixa de dizer e, em "E na vida das pessoas?", o que ela pode mudar no
+  dia a dia, com benefícios e riscos.
+- **Quem decide de verdade:** como ficou o Congresso eleito e o que isso muda para cada um.
+- **O histórico de cada um:** o que já conseguiu aprovar (com uma página com todos os projetos de
+  cada candidato e o link da ficha oficial), os processos e investigações com a decisão da Justiça
+  e o que o desfecho significa, e quanto o mandato atual custa aos cofres públicos.
 
-## Contagem de visitas
+**Na página "O país em números", o contexto que vale para qualquer um dos dois:**
 
-O site conta visitas, só o número, para o painel de visitas. No primeiro gesto de quem lê (rolar,
-tocar, mover o mouse, teclar), a página manda um aviso para o próprio site, em `/_trilha`. O Worker
-em `worker/` confere o aviso e repassa uma contagem ao receptor das landings da Primoia.
+- **A economia ano a ano desde 2003:** inflação, juros, desemprego, renda e dívida, com os governos
+  só como legenda de período.
+- **Para onde vão os impostos:** quanto o governo federal arrecada, em que gasta (de cada R$ 100),
+  quanto entra e quanto sai a cada ano e quanto custa cada instituição por habitante, com as contas
+  refeitas a partir dos dados oficiais.
 
-- O que vai: um identificador aleatório da página aberta, a rota, o país, o tipo de aparelho
-  (celular, tablet, computador) e o tipo de origem (busca, rede social, direto, interno, outro).
-- O que não vai: IP, site de onde a pessoa veio, cidade, rede, navegador. Nada fica guardado no
-  aparelho de quem lê: sem cookie e sem `localStorage`.
-- Robôs, a sonda que testa se o site está no ar e aviso vindo de outro site são descartados.
-- Só `/_trilha` passa pelo Worker; a página sai direto dos arquivos. Se o Worker passar do limite
-  diário do plano, só a contagem para.
-- Sem o segredo `TRILHA_CHAVE` no Worker, nada é enviado. Ele não fica no repositório.
-- Para conferir sem somar no número, abra o site com `?utm_source=teste`.
+## Como o site tenta ser justo
 
-O teste usa um navegador sem janela. No Windows sem Chrome instalado, aponte para o
-Edge antes de rodar: `CHROME_BIN="C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"`.
+- Nenhuma nota para candidato e nenhuma recomendação de voto.
+- Os dois têm a mesma estrutura, as mesmas perguntas e o mesmo tratamento visual. Onde a
+  trajetória deles é diferente (um já foi presidente, o outro não), o site mostra a diferença em
+  vez de esconder.
+- Toda informação tem fonte e data. Proposta do plano tem a página do PDF.
+- Fato, proposta e análise aparecem com etiquetas diferentes: promessa não é realização, e a leitura
+  do site não é fato.
+- Verde, amarelo e azul são as cores do país, nunca de candidato ou partido.
+- Parte dessas regras é conferida automaticamente a cada mudança no conteúdo.
 
-## Onde fica cada coisa
+## O que o site não é
 
-| Arquivo | O que tem |
-|---|---|
-| `src/app/temas.ts` | Os 14 temas: propostas (com página do plano), análise e o que acompanhar |
-| `src/app/data.ts` | Candidatos, 1º turno, Congresso, cenários, gráficos, regras e perguntas para IA |
-| `src/app/fontes.ts` | Todas as fontes citadas e a data de revisão (`UPDATED_AT`) |
-| `src/app/models.ts` | Formato dos dados |
-| `src/app/app.html` / `app.ts` | A página |
-| `src/app/estilos/` | Estilos por parte da página (o `app.scss` só junta os arquivos, em ordem) |
-| `src/app/paper-stack.ts` | Componente dos cards de papel (folha, jornal, post-it, liso) |
-| `public/` | Imagens, ícones e a imagem de prévia do link |
-| `worker/trilha.mjs` | O contador de visitas: o que o Worker aceita e o que repassa |
+Não é pesquisa de opinião, não é checagem de discurso e não cobre o que foi dito em debate, entrevista
+ou rede social: só o que está registrado em documento oficial ou em levantamento com fonte. O que
+ainda falta conferir está listado no próprio site, em "Limites desta versão", e em
+[PENDENCIAS.md](PENDENCIAS.md).
 
-## Regras editoriais (o teste `test:dados` cobra parte delas)
+## Privacidade
 
-- Toda informação tem fonte; toda proposta do plano tem a página do PDF do TSE.
-- Os dois candidatos têm o mesmo número de propostas em cada tema e a mesma estrutura de análise.
-- Fato, proposta e análise aparecem com etiquetas diferentes.
-- Verde, amarelo e azul são cores do país, nunca de candidato ou partido.
+O site conta visitas, e só o número. Não usa cookie, não guarda nada no aparelho de quem lê e não
+registra IP, cidade ou de qual site a pessoa veio.
 
 ## Licença e contribuições
 

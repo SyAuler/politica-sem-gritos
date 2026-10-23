@@ -129,3 +129,89 @@ export interface DebtFactorYear {
   /** O que sobra: câmbio, empréstimos a bancos públicos, operações do Banco Central etc. */
   outros: number;
 }
+
+/**
+ * Um cargo da trajetória e o que saiu dele em leis. Quem propõe como parlamentar e
+ * quem envia projetos como presidente têm papéis diferentes: `kind` separa os dois.
+ */
+export interface RecordRole {
+  role: string;
+  period: string;
+  kind: 'parlamentar' | 'executivo';
+  /** Números do cargo (propostas, quantas viraram lei), sempre com o recorte no rótulo. */
+  stats: { value: string; label: string }[];
+  /** Exemplos de normas aprovadas, com o papel do candidato em cada uma. */
+  examples: { title: string; detail: string; how: string }[];
+  note?: string;
+  sources: SourceReference[];
+}
+
+export interface LawRecord {
+  id: CandidateId;
+  summary: string;
+  roles: RecordRole[];
+}
+
+/** Situação de um projeto, em quatro grupos (o texto oficial vai em `situacaoTexto`). */
+export type ProjectStatus = 'lei' | 'tramitando' | 'parado' | 'retirado';
+
+/** Um projeto da lista completa (gerada por scripts/projetos.mjs). */
+export interface ProjectItem {
+  cargo: string;
+  tipo: string;
+  numero: number;
+  ano: number;
+  data: string;
+  ementa: string;
+  papel: string;
+  situacao: ProjectStatus;
+  situacaoTexto: string;
+  norma?: string;
+  url: string;
+}
+
+export interface ProjectFile {
+  id: CandidateId;
+  geradoEm: string;
+  cargos: { key: string; label: string; period: string; fonte: string; fonteUrl: string }[];
+  avisos: string[];
+  itens: ProjectItem[];
+}
+
+/**
+ * Como um caso terminou (ou está). Cada desfecho tem um significado jurídico diferente:
+ * anulado não é absolvido, e arquivado não é inocentado. O glossário do site explica.
+ */
+export type CaseOutcome =
+  'condenado' | 'anulado' | 'absolvido' | 'rejeitado' | 'arquivado' | 'andamento' | 'sem-acusacao';
+
+/** Uma decisão ou fato marcante do caso, com a data e quem decidiu. */
+export interface CaseEvent {
+  date: string;
+  /** Quem decidiu ou agiu: vara, tribunal, MP, PF, CPI... */
+  body: string;
+  text: string;
+  sources: SourceReference[];
+}
+
+export interface LegalCase {
+  id: string;
+  title: string;
+  period: string;
+  /** 'pessoal': o candidato foi alvo; 'entorno': governo, gabinete ou família, sem acusação a ele. */
+  group: 'pessoal' | 'entorno';
+  allegation: string;
+  /** Papel do candidato, em palavras simples ("réu", "não foi denunciado"...). */
+  role: string;
+  outcome: CaseOutcome;
+  /** O desfecho por extenso, com o motivo (ex.: "anulado: juiz sem competência para julgar"). */
+  outcomeText: string;
+  timeline: CaseEvent[];
+  /** Análise: o que o desfecho significa e o que não significa. */
+  meaning: string;
+}
+
+export interface CaseRecord {
+  id: CandidateId;
+  cases: LegalCase[];
+}

@@ -1,0 +1,66 @@
+// Rodapé do site (componente app-site-footer).
+
+footer {
+  max-width: clamp(1240px, 90vw, 1760px);
+  margin: 0 auto;
+  padding-left: clamp(1.25rem, 2.5vw, 2.5rem);
+  padding-right: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+// Rodapé em azul-escuro, de ponta a ponta da tela.
+footer {
+  padding-top: 1.8rem;
+  padding-bottom: 2.2rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #12304f;
+  box-shadow: 0 0 0 100vmax #12304f;
+  clip-path: inset(0 -100vmax);
+
+  p {
+    margin: 0 0 0.5rem;
+  }
+
+  a {
+    color: var(--amarelo);
+  }
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 1rem 3rem;
+}
+
+.footer-brand {
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+
+  span {
+    display: block;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amarelo);
+  }
+}
+
+.footer-credits {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+@media (max-width: 860px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  footer {
+    padding-inline: 1rem;
+  }
+}

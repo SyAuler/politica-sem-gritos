@@ -1,0 +1,492 @@
+@use 'tabela';
+
+// "Para onde vão os impostos": números de abertura, grade de R$ 100, série por ano e
+// cards das instituições (os cards e o painel reaproveitam os estilos de _gastos.scss).
+
+.tax-heads {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.4rem;
+}
+
+// grade de 100 quadradinhos ao lado da legenda com os valores
+.per100 {
+  display: grid;
+  grid-template-columns: minmax(15rem, 22rem) 1fr;
+  gap: 1.6rem;
+  align-items: start;
+  margin: 1rem 0;
+}
+
+.waffle {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  aspect-ratio: 1;
+}
+
+.sq {
+  border-radius: 3px;
+  transition: opacity 0.15s ease;
+
+  &.dim {
+    opacity: 0.18;
+  }
+}
+
+.per100-legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 1rem 4.4rem 1fr;
+    gap: 0.6rem;
+    align-items: start;
+    padding: 0.45rem 0.3rem;
+    border-top: 1px dashed var(--linha);
+    border-radius: 4px;
+    cursor: default;
+
+    &:hover,
+    &:focus-visible {
+      background: #f4f8fb;
+    }
+  }
+
+  .sw {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.2rem;
+    border-radius: 3px;
+  }
+
+  small {
+    display: block;
+    color: var(--tinta-suave);
+    font-size: 0.82rem;
+  }
+}
+
+.per100-value {
+  white-space: nowrap;
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--tinta);
+}
+
+// entrada x saída: legenda clicável e duas barras por ano (a da saída empilhada por área)
+.io-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.6rem 0 0.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.io-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tinta);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+
+  &.on {
+    border-color: var(--azul);
+    background: #eef3f8;
+    font-weight: 700;
+  }
+
+  &.dim {
+    opacity: 0.5;
+  }
+
+  .sw {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 2px;
+  }
+}
+
+.io-in-sw,
+.io-in {
+  background: #3b4652;
+}
+
+.io-scroll {
+  overflow-x: auto;
+}
+
+.io-chart {
+  display: flex;
+  gap: 0.6rem;
+  min-width: 46rem;
+  margin-top: 0.6rem;
+}
+
+.io-group {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 0;
+
+  .gov {
+    margin: 0.3rem 0 0;
+    padding-top: 0.25rem;
+    border-top: 2px solid var(--verde);
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--verde);
+  }
+}
+
+.io-years {
+  display: flex;
+  gap: 4px;
+}
+
+.io-year {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+
+  .year {
+    margin-top: 0.2rem;
+    font-size: 0.72rem;
+    color: var(--tinta-suave);
+  }
+}
+
+.io-plot {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+  height: 15rem;
+
+  // no modo destaque, o topo fica livre para o valor escrito acima de cada barra
+  &.focused {
+    padding-top: 3.4rem;
+  }
+}
+
+.io-in,
+.io-out {
+  flex: 1 1 0;
+  max-width: 0.9rem;
+  border-radius: 2px 2px 0 0;
+}
+
+// a saída empilhada: previdência embaixo, com 1px de folga entre as áreas
+.io-out {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1px;
+  position: relative;
+}
+
+.io-seg {
+  flex-basis: 0;
+  min-height: 1px;
+}
+
+.io-val {
+  position: absolute;
+  white-space: nowrap;
+  bottom: calc(100% + 0.2rem);
+  left: 50%;
+  margin-left: -0.4rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.tax-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0 0.8rem;
+  font-weight: 600;
+
+  select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #c9ced3;
+    border-radius: 5px;
+    background: #fff;
+    font: inherit;
+  }
+}
+
+.tax-series-note {
+  margin: 0 0 0.6rem;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
+}
+
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 1.6rem 1rem;
+  margin: 1.2rem 0 2rem;
+}
+
+.org-scope {
+  margin-top: 0.4rem !important;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--tinta-suave);
+}
+
+.org-card .hl-value {
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+}
+
+.tax-extra {
+  margin-top: 2.4rem;
+}
+
+.tax-big {
+  margin: 0.2rem 0 0.4rem !important;
+  font-family: Georgia, serif;
+  font-size: 2rem;
+  color: var(--azul);
+
+  small {
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--tinta-suave);
+  }
+}
+
+// fundos: duas barras finas por ano (eleitoral e partidário)
+.fund-track {
+  height: 1.1rem;
+  background: none;
+
+  .hl-bar {
+    height: 0.5rem;
+  }
+
+  .alt {
+    top: 0.6rem;
+    background: #eb6834;
+  }
+}
+
+.key-alt {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.55rem;
+  border-radius: 2px;
+  background: #eb6834;
+}
+
+.tax-jud {
+  margin-top: 2.4rem;
+}
+
+.jud-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 2rem;
+  margin: 0.6rem 0 1.2rem;
+}
+
+.jud-row {
+  grid-template-columns: 11rem 1fr 5.5rem;
+
+  .hl-year-label small {
+    display: block;
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+}
+
+.jud-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0 0 0.6rem;
+
+  div {
+    padding: 0.5rem 0.7rem;
+    border-left: 3px solid var(--amarelo);
+    background: #fbfaf6;
+  }
+
+  dt {
+    font-family: Georgia, serif;
+    font-size: 1.4rem;
+    color: var(--azul);
+  }
+
+  dd {
+    margin: 0.1rem 0 0;
+    font-size: 0.86rem;
+    color: var(--tinta-suave);
+  }
+}
+
+// linha da evolução do Judiciário: 2px, pontos de 10px, rótulos só nos pontos-chave
+.jud-line-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+}
+
+.jud-mode {
+  display: inline-flex;
+  border: 1px solid var(--azul);
+  border-radius: 999px;
+  overflow: hidden;
+
+  button {
+    padding: 0.3rem 0.8rem;
+    border: 0;
+    background: #fff;
+    color: var(--azul);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.on {
+      background: var(--azul);
+      color: #fff;
+    }
+  }
+}
+
+.jud-scroll {
+  overflow-x: auto;
+}
+
+.jud-line {
+  display: block;
+  width: 100%;
+  min-width: 40rem;
+  height: auto;
+  margin: 0.4rem 0;
+
+  .grid {
+    stroke: var(--linha);
+    stroke-width: 1;
+  }
+
+  .axis {
+    font-size: 13px;
+    fill: var(--tinta-suave);
+    text-anchor: end;
+  }
+
+  .line {
+    fill: none;
+    stroke: #3d7cc0;
+    stroke-width: 2.5;
+  }
+
+  .hit {
+    fill: transparent;
+  }
+
+  .dot {
+    fill: #fff;
+    stroke: #3d7cc0;
+    stroke-width: 2;
+
+    &.key {
+      fill: #3d7cc0;
+    }
+  }
+
+  .pt:hover .dot {
+    fill: #3d7cc0;
+  }
+
+  .lbl {
+    font-size: 15px;
+    font-weight: 700;
+    fill: var(--tinta);
+    text-anchor: middle;
+
+    &.end {
+      text-anchor: end;
+    }
+  }
+
+  .yr {
+    font-size: 13px;
+    fill: var(--tinta-suave);
+    text-anchor: middle;
+  }
+}
+
+.tax-concentration {
+  margin: 2.4rem 0;
+}
+
+.conc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem 2rem;
+  margin-top: 0.8rem;
+}
+
+.conc-item {
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--linha);
+
+  h4 {
+    margin: 0 0 0.3rem;
+    color: var(--verde);
+  }
+
+  p {
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+  }
+}
+
+.conc-counter {
+  color: var(--tinta-suave);
+}
+
+.tax-super {
+  margin-bottom: 0;
+}
+
+@media (max-width: 860px) {
+  .tax-heads,
+  .per100,
+  .jud-grid,
+  .conc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .waffle {
+    max-width: 20rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .jud-row {
+    grid-template-columns: 7.5rem 1fr 5.5rem;
+  }
+}

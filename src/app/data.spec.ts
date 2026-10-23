@@ -3,10 +3,14 @@ import {
   CHAMBERS,
   FIRST_ROUND,
   INDICATORS,
+  LAW_RECORDS,
+  LAW_ROLES,
   SCENARIOS,
   TOPIC_GROUPS,
   TOPICS,
 } from './data';
+import { SPEND_RECORDS } from './gastos';
+import { CASE_DEFENSES, CASE_OUTCOMES, CASE_RECORDS, CASE_RUMORS } from './processos';
 
 /**
  * Regras editoriais do site conferidas a cada mudança no conteúdo: tudo com fonte,
@@ -80,6 +84,16 @@ describe('Conteúdo do site', () => {
       ...CHAMBERS.flatMap((c) => c.sources),
       ...INDICATORS.flatMap((i) => i.sources),
       ...FIRST_ROUND.sources,
+      ...LAW_RECORDS.flatMap((r) => r.roles.flatMap((role) => role.sources)),
+      ...CASE_RECORDS.flatMap((r) => r.cases.flatMap((k) => k.timeline.flatMap((e) => e.sources))),
+      ...Object.values(CASE_RUMORS).flatMap((list) => list.flatMap((r) => r.sources)),
+      ...Object.values(CASE_DEFENSES).flatMap((d) => d.sources),
+      ...SPEND_RECORDS.flatMap((r) => [
+        ...r.monthly.flatMap((i) => i.sources),
+        ...r.headlines.flatMap((h) => [...h.sources, ...(h.notes ?? []).flatMap((n) => n.sources)]),
+        ...r.corrections.flatMap((c) => c.sources),
+        ...(r.directed ?? []).flatMap((i) => i.sources),
+      ]),
     ];
     for (const s of all) {
       expect(s.url)
@@ -97,5 +111,62 @@ describe('Conteúdo do site', () => {
 
   it('tem um cenário para cada candidato', () => {
     expect(SCENARIOS.map((s) => s.id).sort()).toEqual([...ids].sort());
+  });
+
+  it('mostra o histórico de leis dos dois com o mesmo número de exemplos', () => {
+    expect(LAW_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const [a, b] = LAW_RECORDS.map((r) => r.roles.flatMap((role) => role.examples).length);
+    expect(a).toBe(b);
+    for (const r of LAW_RECORDS) {
+      for (const role of r.roles) {
+        const where = `${r.id} / ${role.role}`;
+        expect(role.stats.length).withContext(where).toBeGreaterThan(0);
+        expect(role.sources.length).withContext(where).toBeGreaterThan(0);
+        for (const ex of role.examples) {
+          expect(LAW_ROLES.map((role) => role.label))
+            .withContext(`${where}: ${ex.title}`)
+            .toContain(ex.how);
+        }
+      }
+    }
+  });
+  it('dá a cada caso de processo uma decisão datada, com fonte, e um desfecho explicado', () => {
+    expect(CASE_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const outcomes = CASE_OUTCOMES.map((o) => o.key);
+    for (const r of CASE_RECORDS) {
+      for (const k of r.cases) {
+        const where = `${r.id} / ${k.id}`;
+        expect(outcomes).withContext(where).toContain(k.outcome);
+        expect(k.timeline.length).withContext(where).toBeGreaterThan(0);
+        expect(k.meaning.length).withContext(where).toBeGreaterThan(20);
+        for (const e of k.timeline) {
+          expect(e.sources.length).withContext(`${where} ${e.date}`).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it('mostra o mesmo número de boatos checados e a posição de cada um, com fonte', () => {
+    const [a, b] = ids.map((id) => CASE_RUMORS[id].length);
+    expect(a).toBe(b);
+    for (const id of ids) {
+      expect(CASE_DEFENSES[id].sources.length).withContext(id).toBeGreaterThan(0);
+    }
+  });
+  it('mostra os custos dos dois com o mesmo número de manchetes e fonte em tudo', () => {
+    expect(SPEND_RECORDS.map((r) => r.id).sort()).toEqual([...ids].sort());
+    const [a, b] = SPEND_RECORDS.map((r) => r.headlines.length);
+    expect(a).toBe(b);
+    for (const r of SPEND_RECORDS) {
+      expect(r.headlines.some((h) => h.kind === 'campanha'))
+        .withContext(r.id)
+        .toBeTrue();
+      for (const h of r.headlines) {
+        expect(h.sources.length).withContext(`${r.id}: ${h.label}`).toBeGreaterThan(0);
+      }
+      for (const it of [...r.monthly, ...r.corrections, ...(r.directed ?? [])]) {
+        expect(it.sources.length).withContext(r.id).toBeGreaterThan(0);
+      }
+    }
   });
 });

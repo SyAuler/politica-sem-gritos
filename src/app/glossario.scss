@@ -1,0 +1,111 @@
+@use 'estilos/etiqueta';
+
+:host {
+  display: block;
+}
+
+// glossário dos papéis, recolhido: o título mostra as etiquetas, aberto mostra a
+// explicação de cada uma (etiqueta à esquerda, explicação à direita)
+.law-glossary {
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:hover .law-glossary-title {
+      text-decoration: underline;
+    }
+  }
+
+  .law-glossary-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .law-glossary-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--azul);
+  }
+
+  .law-glossary-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  // seta que gira quando abre
+  .law-glossary-icon {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #eef3f8;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-right: 2px solid var(--azul);
+      border-bottom: 2px solid var(--azul);
+      transform: translateY(-2px) rotate(45deg);
+      transition: transform 0.2s ease;
+    }
+  }
+
+  details[open] .law-glossary-icon::before {
+    transform: translateY(2px) rotate(-135deg);
+  }
+
+  details[open] .law-glossary-chips {
+    display: none;
+  }
+
+  .note {
+    margin: 0.8rem 0 0;
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+    font-style: italic;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0.9rem 0 0;
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: 11.5rem 1fr;
+    gap: 0.9rem;
+    align-items: start;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--linha);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 600px) {
+    div {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+  }
+}
